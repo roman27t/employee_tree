@@ -1,0 +1,60 @@
+version: "3.9"
+
+volumes:
+  pg_data:
+
+networks:
+  app-network:
+
+services:
+  pg_db:
+    image: postgres:15.1
+    container_name: pg_name
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=db_name
+      - PGDATA=/var/lib/postgresql/data/pg_data
+    volumes:
+      - pg_data:/var/lib/posgresql/data
+#      - ./ltree.sql:/docker-entrypoint-initdb.d/ltree.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+  app:
+    build:
+      context: .
+    depends_on:
+      - pg_db
+    container_name: app-backend
+    command: sh -c "python main.py"
+    #    command: sh -c "alembic upgrade head && python main.py"
+    volumes:
+      - ./app:/app
+    ports:
+      - "8000:8000"
+    tty: true
+    stdin_open: true
+    restart: always
+    networks:
+      - app-network
+    environment:
+      PYTHONPATH: /app
+      DB_URL: "postgresql+asyncpg://postgres:postgres@pg_db/postgres"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    depends_on:
+      - pg_db
+    restart: always
+    ports:
+      - "5050:80"
+    networks:
+      - app-network
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@google.com
+      PGADMIN_DEFAULT_PASSWORD: admin
