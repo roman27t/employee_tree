@@ -1,16 +1,17 @@
 
 ### Шаги запуска
-1.    Старт ```bash
+1. Старт    
+   ```bash
    docker-compose up --build
     ``` 
 2. После успешного запуска необходимо - install extension for DB:
-docker-compose exec pg_db sh
-   ```bash
+    ```bash
+   docker-compose exec app sh
    psql -U postgres --dbname=postgres
    ```
 и далее
    ```sql
-   postgres=# CREATE EXTENSION IF NOT EXISTS ltree;
+   CREATE EXTENSION IF NOT EXISTS ltree;
    ```
 3.migrate:
    ```bash
@@ -19,6 +20,7 @@ docker-compose exec pg_db sh
    ```
 Run tests:
    ```bash
+   docker-compose exec app sh
    pytest tests --asyncio-mode=strict -v -s
    ```
 
