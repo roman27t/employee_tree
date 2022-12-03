@@ -70,6 +70,8 @@ class StaffView(web.View, ahsa.SAMixin):
                     return web.json_response({'message': 'bad position'}, status=400)
 
             person = await db_session.get(StaffModel, id_schema.id)
+            if person is None:
+                return web.json_response({'message': 'bad person'}, status=400)
             for key, value in patch_schema.dict().items():
                 if value is not None:
                     setattr(person, key, value)

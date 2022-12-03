@@ -67,17 +67,19 @@ async def test_post_staff_duplicate(create_test_client, event_loop):
 
 
 @pytest.mark.parametrize(
-    'input_data,status_code,',
+    'pk,input_data,status_code,',
     [
-        ({'last_name': 'Sidorov', 'first_name': 'Alexey'}, 200),
-        ({'last_name': 'Rebrov', 'birthdate': dt.datetime.strptime('21.11.2000', '%d.%m.%Y').date().isoformat()}, 200),
-        ({'last_name': 'Rebrov', 'birthdate': 'bad_date'}, 400),
+        (3, {'last_name': 'Sidorov', 'first_name': 'Alexey'}, 200),
+        (3, {'last_name': 'Tor', 'birthdate': dt.datetime.strptime('21.11.2000', '%d.%m.%Y').date().isoformat()}, 200),
+        (3, {'last_name': 'Rebrov', 'birthdate': 'bad_date'}, 400),
+        (3, {'last_name': 'Rebrov', 'position_id': 99999999, }, 400),
+        (99999999, {'last_name': 'Sidorov', 'first_name': 'Alexey'}, 400),
     ],
 )
 @pytest.mark.asyncio
-async def test_patch_staff(create_test_client, event_loop, input_data: dict, status_code: int):
+async def test_patch_staff(create_test_client, event_loop, pk: int, input_data: dict, status_code: int):
     client = await create_test_client
-    response = await client.patch('/staff/3/', data=json.dumps(input_data))
+    response = await client.patch(f'/staff/{pk}/', data=json.dumps(input_data))
     assert response.status == status_code
     data = await response.json()
     if status_code == 200:
