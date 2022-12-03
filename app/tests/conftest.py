@@ -19,11 +19,6 @@ def event_loop():
     loop.close()
 
 
-@pytest.fixture(scope="session")
-def _database_url():
-    return "postgresql+asyncpg://postgres:masterkey@localhost/dbtest"
-
-
 @pytest.mark.asyncio
 @pytest.fixture
 async def create_test_client(aiohttp_client):
