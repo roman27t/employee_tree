@@ -11,7 +11,7 @@ engine = create_async_engine(DB_ADDRESS, echo=True)
 Session = orm.sessionmaker(engine, AsyncSession, expire_on_commit=False)
 
 
-async def app_factory() -> web.Application:
+async def app_factory(re_loader: bool = True) -> web.Application:
     app = web.Application()
     ahsa.setup(
         app,
@@ -20,7 +20,8 @@ async def app_factory() -> web.Application:
         ],
     )
     app.add_routes(get_routes())
-    aioreloader.start()
+    if re_loader:
+        aioreloader.start()
     return app
 
 
