@@ -26,7 +26,7 @@ async def test_get_staff(create_test_client, event_loop):
 
 
 @pytest.mark.asyncio
-async def test__post_position(create_test_client, event_loop):
+async def test_post_position(create_test_client, event_loop):
     input_data = {
         'last_name': 'Ivanov',
         'first_name': 'Roman',

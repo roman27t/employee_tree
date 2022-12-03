@@ -21,7 +21,7 @@
 Run tests:
    ```bash
    docker-compose exec app sh
-   pytest tests --asyncio-mode=strict -v -s
+   pytest tests -v -s
    ```
 
 
