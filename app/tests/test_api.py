@@ -14,15 +14,23 @@ async def test_gen_position(create_test_client, event_loop):
     response = await client.get('/system/init_data/')
     assert response.status == 200
 
-
+@pytest.mark.parametrize(
+        'url,status_code,has_data', [
+        ('/staff/', 200, True),
+        ('/staff/1/', 200, True),
+        ('/staff/999999999/', 200, False),
+        ('/staff/aaaaa/', 400, False),
+    ]
+)
 @pytest.mark.asyncio
-async def test_get_staff(create_test_client, event_loop):
+async def test_get_staff(create_test_client, event_loop, url: str, status_code: int, has_data: bool):
     client = await create_test_client
-    response = await client.get('/staff/')
-    assert response.status == 200
+    response = await client.get(url)
+    assert response.status == status_code
     data = await response.json()
-    assert data['staff']
-    assert data['position']
+    if status_code == 200:
+        assert bool(data['staff']) is has_data
+        assert bool(data['position']) is has_data
 
 
 @pytest.mark.asyncio
