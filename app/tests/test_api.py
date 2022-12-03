@@ -14,12 +14,13 @@ async def test_gen_position(create_test_client, event_loop):
 
 
 @pytest.mark.parametrize(
-        'url,status_code,has_data', [
+    'url,status_code,has_data',
+    [
         ('/staff/', 200, True),
         ('/staff/1/', 200, True),
         ('/staff/999999999/', 200, False),
         ('/staff/aaaaa/', 400, False),
-    ]
+    ],
 )
 @pytest.mark.asyncio
 async def test_get_staff(create_test_client, event_loop, url: str, status_code: int, has_data: bool):
@@ -76,10 +77,11 @@ async def test_patch_staff(create_test_client, event_loop):
 
 
 @pytest.mark.parametrize(
-        'method,url,status_code,', [
+    'method,url,status_code,',
+    [
         ('post', '/staff/', 400),
         ('patch', '/staff/3/', 400),
-    ]
+    ],
 )
 @pytest.mark.asyncio
 async def test_send_bad_request_error(create_test_client, event_loop, method: str, url: str, status_code: int):

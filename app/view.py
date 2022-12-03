@@ -22,11 +22,7 @@ class MyClassBasedView(web.View, ahsa.SAMixin):
         db_session = self.get_sa_session()
         async with db_session.begin():
             query = sa.select(StaffModel, PositionModel).join(PositionModel)
-            query = (
-                query.where(StaffModel.pk == int(_id)).limit(_id)
-                if _id
-                else query.order_by('path')
-            )
+            query = query.where(StaffModel.pk == int(_id)).limit(_id) if _id else query.order_by('path')
         result = await db_session.execute(query)
         result = result.scalars()
         data = {'staff': [], 'position': {}}
