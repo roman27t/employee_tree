@@ -11,7 +11,7 @@ from models import StaffModel, PositionModel
 from schemas import IdSchema, PostSchema, PatchSchema
 
 
-class MyClassBasedView(web.View, ahsa.SAMixin):
+class StaffView(web.View, ahsa.SAMixin):
     async def get(self):
         _id = self.request.match_info.get('id')
         if _id:
@@ -79,6 +79,7 @@ class MyClassBasedView(web.View, ahsa.SAMixin):
 
 
 async def init_data(request):
+    # service test view
     sa_session = ahsa.get_session(request)
     names = (
         'dev',
