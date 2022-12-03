@@ -46,3 +46,16 @@ Run tests:
    }
    ```
 5. Наполнение БД (тестовое): GET /system/init_data/
+
+
+### Миграции
+   ```bash
+   docker-compose exec app sh
+   
+   alembic init -t async migrations # инит
+   alembic revision  --autogenerate -m "Add model" - созд. миграции
+   alembic upgrade head # применение
+   alembic downgrade 8ac14e223d1  # понижение
+   alembic downgrade base  # This command will undo all migrations
+
+   ```
