@@ -62,4 +62,6 @@ class StaffModel(Base):
             'path': str(self.path),
             'position_id': self.position_id,
             'wage_rate': float(self.wage_rate),
+            'birthdate': self.birthdate.isoformat(),
+            'hiring_date': self.hiring_date.date().isoformat(),
         }

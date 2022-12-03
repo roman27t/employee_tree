@@ -57,5 +57,4 @@ Run tests:
    alembic upgrade head # применение
    alembic downgrade 8ac14e223d1  # понижение
    alembic downgrade base  # This command will undo all migrations
-
    ```

@@ -3,7 +3,7 @@ import random
 import pytest
 import json
 
-# todo отдельную бд под тесты
+# todo отдельную DB под тесты
 
 
 @pytest.mark.asyncio
@@ -66,14 +66,22 @@ async def test_post_staff_duplicate(create_test_client, event_loop):
     assert response_2.status == 403
 
 
+@pytest.mark.parametrize(
+    'input_data,status_code,',
+    [
+        ({'last_name': 'Sidorov', 'first_name': 'Alexey'}, 200),
+        ({'last_name': 'Rebrov', 'birthdate': dt.datetime.strptime('21.11.2000', '%d.%m.%Y').date().isoformat()}, 200),
+        ({'last_name': 'Rebrov', 'birthdate': 'bad_date'}, 400),
+    ],
+)
 @pytest.mark.asyncio
-async def test_patch_staff(create_test_client, event_loop):
-    input_data = {'last_name': 'Sidorov', 'first_name': 'Alexey'}
+async def test_patch_staff(create_test_client, event_loop, input_data: dict, status_code: int):
     client = await create_test_client
     response = await client.patch('/staff/3/', data=json.dumps(input_data))
-    assert response.status == 200
+    assert response.status == status_code
     data = await response.json()
-    assert data
+    if status_code == 200:
+        assert data
 
 
 @pytest.mark.parametrize(
