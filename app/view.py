@@ -34,15 +34,14 @@ class MyClassBasedView(web.View, ahsa.SAMixin):
         return web.json_response(data)
 
     async def post(self):
-        input_data = await self.request.json()
+        body = await self.request.text()
         try:
-            input_schema = PostSchema(**input_data)
+            input_schema = PostSchema.parse_raw(body)
         except ValidationError as e:
             return web.json_response({"message": str(e)}, status=400)
-        parent_id = input_data.get("parent_id")
         db_session = self.get_sa_session()
         async with db_session.begin():
-            parent_obj = await db_session.get(StaffModel, int(parent_id))
+            parent_obj = await db_session.get(StaffModel, input_schema.parent_id)
             if parent_obj is None:
                 return web.json_response({"message": "bad parent"}, status=400)
 
@@ -56,18 +55,16 @@ class MyClassBasedView(web.View, ahsa.SAMixin):
         return web.json_response(new_person.serialized)
 
     async def patch(self):
-        input_data = await self.request.json()
+        body = await self.request.text()
         try:
             id_schema = IdSchema(id=self.request.match_info.get("id"))
-            patch_schema = PatchSchema(**input_data)
+            patch_schema = PatchSchema.parse_raw(body)
         except ValidationError as e:
             return web.json_response({"message": str(e)}, status=400)
         db_session = self.get_sa_session()
         async with db_session.begin():
-            if input_data.get("position_id"):
-                position = await db_session.get(
-                    PositionModel, int(input_data["position_id"])
-                )
+            if patch_schema.position_id:
+                position = await db_session.get(PositionModel, patch_schema.position_id)
                 if position is None:
                     return web.json_response({"message": "bad position"}, status=400)
 
