@@ -1,3 +1,4 @@
+import datetime as dt
 from typing import Optional
 from pydantic import BaseModel
 from pydantic import (
@@ -25,6 +26,7 @@ class PostSchema(PydBaseModel):
     first_name: constr(max_length=250)
     middle_name: constr(max_length=250) = ""
     wage_rate: condecimal(max_digits=10, decimal_places=2)
+    birthdate: dt.date
 
 
 class PatchSchema(PydBaseModel):
@@ -33,3 +35,4 @@ class PatchSchema(PydBaseModel):
     first_name: Optional[constr(max_length=250)]
     middle_name: Optional[constr(max_length=250)]
     wage_rate: Optional[condecimal(max_digits=10, decimal_places=2)]
+    birthdate: Optional[dt.date]

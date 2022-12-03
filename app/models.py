@@ -1,6 +1,6 @@
 import datetime as dt
 import sqlalchemy as sa
-from sqlalchemy import orm, ForeignKey
+from sqlalchemy import orm, ForeignKey, UniqueConstraint
 from sqlalchemy_utils import LtreeType
 from sqlalchemy import Index
 from sqlalchemy import func
@@ -34,6 +34,7 @@ class StaffModel(Base):
     last_name = sa.Column(sa.String(50), nullable=False)
     first_name = sa.Column(sa.String(50), nullable=False)
     middle_name = sa.Column(sa.String(50), nullable=False, default="")
+    birthdate = sa.Column(sa.Date(), nullable=False)
     wage_rate = sa.Column(sa.DECIMAL(10, 2), nullable=False)
     path = sa.Column(LtreeType, nullable=False)
     position_id = sa.Column(sa.Integer, ForeignKey("position.pk"))
@@ -46,7 +47,10 @@ class StaffModel(Base):
     #     backref='children',
     #     viewonly=True
     # )
-    # __table_args__ = (Index('ix_nodes_path', path, postgresql_using='gist'),)
+    __table_args__ = (
+        UniqueConstraint("last_name", "birthdate", 'position_id', name='unique_compound_key'),
+        # Index('ix_nodes_path', path, postgresql_using='gist'),
+    )
 
     @property
     def serialized(self) -> dict:

@@ -1,3 +1,4 @@
+import datetime as dt
 import random
 import pytest
 import json
@@ -31,20 +32,37 @@ async def test_get_staff(create_test_client, event_loop, url: str, status_code: 
         assert bool(data['position']) is has_data
 
 
-@pytest.mark.asyncio
-async def test_post_staff(create_test_client, event_loop):
-    input_data = {
+def __create_data_person() -> dict:
+    birthdate = dt.datetime.strptime('21.11.1940', '%d.%m.%Y').date() + dt.timedelta(days=random.randint(1, 21900))
+    return {
         'last_name': 'Ivanov',
         'first_name': 'Roman',
         'parent_id': random.randint(2, 3),
         'wage_rate': 99777.01,
-        'position_id': 2,
+        'position_id': random.randint(1, 7),
+        'birthdate': birthdate.isoformat(),
     }
+
+
+@pytest.mark.asyncio
+async def test_post_staff(create_test_client, event_loop):
     client = await create_test_client
+    input_data = __create_data_person()
     response = await client.post('/staff/', data=json.dumps(input_data))
     assert response.status == 200
     data = await response.json()
     assert data['last_name'] == input_data['last_name']
+
+
+# @pytest.mark.skipif()
+@pytest.mark.asyncio
+async def test_post_staff_duplicate(create_test_client, event_loop):
+    client = await create_test_client
+    input_data = __create_data_person()
+    response_1 = await client.post('/staff/', data=json.dumps(input_data))
+    response_2 = await client.post('/staff/', data=json.dumps(input_data))
+    assert response_1.status == 200
+    assert response_2.status == 403
 
 
 @pytest.mark.asyncio
