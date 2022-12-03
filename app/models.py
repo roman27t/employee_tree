@@ -11,35 +11,35 @@ Base = orm.declarative_base(metadata=metadata)
 
 
 class PositionModel(Base):
-    __tablename__ = "position"
+    __tablename__ = 'position'
 
     pk = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     name = sa.Column(sa.String(50), nullable=False, unique=True)
-    detail = sa.Column(sa.String(255), nullable=False, default="")
+    detail = sa.Column(sa.String(255), nullable=False, default='')
 
     @property
     def serialized(self) -> dict:
         return {
-            "pk": self.pk,
-            "name": self.name,
-            "detail": self.detail,
+            'pk': self.pk,
+            'name': self.name,
+            'detail': self.detail,
         }
 
 
 class StaffModel(Base):
-    __tablename__ = "staff"
+    __tablename__ = 'staff'
 
     pk = sa.Column(sa.Integer, primary_key=True, autoincrement=True)
     hiring_date = sa.Column(sa.DateTime(), default=dt.datetime.now)
     last_name = sa.Column(sa.String(50), nullable=False)
     first_name = sa.Column(sa.String(50), nullable=False)
-    middle_name = sa.Column(sa.String(50), nullable=False, default="")
+    middle_name = sa.Column(sa.String(50), nullable=False, default='')
     birthdate = sa.Column(sa.Date(), nullable=False)
     wage_rate = sa.Column(sa.DECIMAL(10, 2), nullable=False)
     path = sa.Column(LtreeType, nullable=False)
-    position_id = sa.Column(sa.Integer, ForeignKey("position.pk"))
+    position_id = sa.Column(sa.Integer, ForeignKey('position.pk'))
 
-    position = relationship("PositionModel")
+    position = relationship('PositionModel')
 
     # parent = relationship(
     #     'Node',
@@ -48,18 +48,18 @@ class StaffModel(Base):
     #     viewonly=True
     # )
     __table_args__ = (
-        UniqueConstraint("last_name", "birthdate", 'position_id', name='unique_compound_key'),
+        UniqueConstraint('last_name', 'birthdate', 'position_id', name='unique_compound_key'),
         # Index('ix_nodes_path', path, postgresql_using='gist'),
     )
 
     @property
     def serialized(self) -> dict:
         return {
-            "pk": self.pk,
-            "last_name": self.last_name,
-            "first_name": self.first_name,
-            "middle_name": self.middle_name,
-            "path": str(self.path),
-            "position_id": self.position_id,
-            "wage_rate": float(self.wage_rate),
+            'pk': self.pk,
+            'last_name': self.last_name,
+            'first_name': self.first_name,
+            'middle_name': self.middle_name,
+            'path': str(self.path),
+            'position_id': self.position_id,
+            'wage_rate': float(self.wage_rate),
         }

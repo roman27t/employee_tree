@@ -24,7 +24,7 @@ class PostSchema(PydBaseModel):
     position_id: PositiveInt
     last_name: constr(max_length=250)
     first_name: constr(max_length=250)
-    middle_name: constr(max_length=250) = ""
+    middle_name: constr(max_length=250) = ''
     wage_rate: condecimal(max_digits=10, decimal_places=2)
     birthdate: dt.date
 
