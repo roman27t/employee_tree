@@ -11,7 +11,7 @@ engine = create_async_engine(i_config.DB_URL, echo=True)
 Session = orm.sessionmaker(engine, AsyncSession, expire_on_commit=False)
 
 
-async def app_factory(re_loader: bool = True) -> web.Application:
+async def app_factory(re_loader: bool = False) -> web.Application:
     app = web.Application()
     ahsa.setup(
         app,
@@ -26,4 +26,4 @@ async def app_factory(re_loader: bool = True) -> web.Application:
 
 
 if __name__ == '__main__':
-    web.run_app(app_factory(), port=i_config.PORT)
+    web.run_app(app_factory(re_loader=i_config.DEBUG), port=i_config.PORT)

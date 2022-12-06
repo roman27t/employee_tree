@@ -11,7 +11,7 @@ virtenv
 touchme
 /deploy.sh
 testfile.py
-environment.ini
+# app/environment.ini   # todo activate for Prod
 
 # Compiled source #
 ###################
