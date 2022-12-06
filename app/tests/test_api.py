@@ -55,7 +55,6 @@ async def test_post_staff(create_test_client, event_loop):
     assert data['last_name'] == input_data['last_name']
 
 
-# @pytest.mark.skipif()
 @pytest.mark.asyncio
 async def test_post_staff_duplicate(create_test_client, event_loop):
     client = await create_test_client

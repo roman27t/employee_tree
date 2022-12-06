@@ -8,6 +8,6 @@ def get_routes() -> list:
         web.get('/staff/{id}/', StaffView),
         web.post('/staff/', StaffView),
         web.patch('/staff/{id}/', StaffView),
-        # service test urls
+        # todo service test urls --> init.sql
         web.get('/system/init_data/', init_data),
     ]

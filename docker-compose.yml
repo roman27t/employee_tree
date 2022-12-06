@@ -15,7 +15,6 @@ services:
       PGDATA: "/var/lib/postgresql/data/pg_data"
     volumes:
       - pg_data:/var/lib/posgresql/data
-#      - ./ltree.sql:/docker-entrypoint-initdb.d/ltree.sql
     ports:
       - "5432:5432"
     networks:
@@ -28,7 +27,6 @@ services:
       - pg_db
     container_name: app-backend
     command: sh -c "python main.py"
-    #    command: sh -c "alembic upgrade head && python main.py"
     volumes:
       - ./app:/app
     ports:

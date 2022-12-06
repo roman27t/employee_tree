@@ -83,7 +83,7 @@ class StaffView(web.View, ahsa.SAMixin):
 
 
 async def init_data(request):
-    # service test view
+    # todo service test urls --> init.sql
     sa_session = ahsa.get_session(request)
     names = (
         'dev',

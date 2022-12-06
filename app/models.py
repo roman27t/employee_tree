@@ -2,9 +2,7 @@ import datetime as dt
 import sqlalchemy as sa
 from sqlalchemy import orm, ForeignKey, UniqueConstraint
 from sqlalchemy_utils import LtreeType
-from sqlalchemy import Index
-from sqlalchemy import func
-from sqlalchemy.orm import relationship, remote, foreign
+from sqlalchemy.orm import relationship
 
 metadata = sa.MetaData()
 Base = orm.declarative_base(metadata=metadata)
@@ -41,15 +39,8 @@ class StaffModel(Base):
 
     position = relationship('PositionModel')
 
-    # parent = relationship(
-    #     'Node',
-    #     primaryjoin=(remote(path) == foreign(func.subpath(path, 0, -1))),
-    #     backref='children',
-    #     viewonly=True
-    # )
     __table_args__ = (
         UniqueConstraint('last_name', 'birthdate', 'position_id', name='unique_compound_key'),
-        # Index('ix_nodes_path', path, postgresql_using='gist'),
     )
 
     @property

@@ -7,8 +7,6 @@ RUN apk add --update --no-cache --virtual .tmp-build-deps gcc libc-dev linux-hea
 RUN pip install --upgrade pip && pip install -r /requirements.txt
 RUN apk del .tmp-build-deps
 
-#ENV PYTHONPATH "${PYTHONPATH}:/app"
-
 WORKDIR /app
 COPY ./app /app
 
