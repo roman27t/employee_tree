@@ -62,6 +62,8 @@ class StaffView(web.View, ahsa.SAMixin):
             patch_schema = PatchSchema.parse_raw(body)
         except ValidationError as e:
             return web.json_response({'message': str(e)}, status=400)
+        if not patch_schema.has_values():
+            return web.json_response({'message': 'nothing update'}, status=400)
         db_session = self.get_sa_session()
         async with db_session.begin():
             if patch_schema.position_id:

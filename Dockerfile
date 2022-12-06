@@ -9,9 +9,7 @@ RUN apk del .tmp-build-deps
 
 #ENV PYTHONPATH "${PYTHONPATH}:/app"
 
-#RUN mkdir /app
 WORKDIR /app
-#COPY ./sql /sql
 COPY ./app /app
 
 RUN adduser -D user

@@ -9,6 +9,9 @@ from pydantic import (
 
 
 class PydBaseModel(BaseModel):
+    def has_values(self) -> bool:
+        return len([i for i in self.dict().values() if i is not None]) > 0
+
     class Config:
         anystr_strip_whitespace = True
         validate_assignment = True
