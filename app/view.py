@@ -1,12 +1,13 @@
 import datetime as dt
+from decimal import Decimal
+
 import sqlalchemy as sa
 import aiohttp_sqlalchemy as ahsa
 from aiohttp import web
-from decimal import Decimal
-
+from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy_utils import Ltree
-from pydantic import ValidationError
+
 from models import StaffModel, PositionModel
 from schemas import IdSchema, PostSchema, PatchSchema
 

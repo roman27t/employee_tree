@@ -1,11 +1,11 @@
 import aioreloader
+import aiohttp_sqlalchemy as ahsa
 from aiohttp import web
 from sqlalchemy import orm
-import aiohttp_sqlalchemy as ahsa
-from sqlalchemy.ext.asyncio import create_async_engine
-from sqlalchemy.ext.asyncio import AsyncSession
-from routers import get_routes
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+
 from config import i_config
+from routers import get_routes
 
 engine = create_async_engine(i_config.DB_URL, echo=True)
 Session = orm.sessionmaker(engine, AsyncSession, expire_on_commit=False)

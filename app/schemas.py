@@ -1,11 +1,7 @@
 import datetime as dt
 from typing import Optional
-from pydantic import BaseModel
-from pydantic import (
-    PositiveInt,
-    condecimal,
-    constr,
-)
+
+from pydantic import BaseModel, PositiveInt, constr, condecimal
 
 
 class PydBaseModel(BaseModel):

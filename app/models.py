@@ -1,8 +1,9 @@
 import datetime as dt
+
 import sqlalchemy as sa
-from sqlalchemy import orm, ForeignKey, UniqueConstraint
-from sqlalchemy_utils import LtreeType
+from sqlalchemy import ForeignKey, UniqueConstraint, orm
 from sqlalchemy.orm import relationship
+from sqlalchemy_utils import LtreeType
 
 metadata = sa.MetaData()
 Base = orm.declarative_base(metadata=metadata)

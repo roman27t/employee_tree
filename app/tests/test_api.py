@@ -1,7 +1,8 @@
-import datetime as dt
-import random
-import pytest
 import json
+import random
+import datetime as dt
+
+import pytest
 
 # todo отдельную DB под тесты
 

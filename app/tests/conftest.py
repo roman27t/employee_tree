@@ -1,6 +1,8 @@
-import pytest
 import sys
 import asyncio
+
+import pytest
+
 from app.main import app_factory
 
 
