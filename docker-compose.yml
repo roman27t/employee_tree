@@ -12,10 +12,7 @@ services:
     container_name: pg_name
     restart: always
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=db_name
-      - PGDATA=/var/lib/postgresql/data/pg_data
+      PGDATA: "/var/lib/postgresql/data/pg_data"
     volumes:
       - pg_data:/var/lib/posgresql/data
 #      - ./ltree.sql:/docker-entrypoint-initdb.d/ltree.sql
@@ -43,6 +40,7 @@ services:
       - app-network
     environment:
       PYTHONPATH: /app
+      PORT: 8000
       DB_URL: "postgresql+asyncpg://postgres:postgres@pg_db/postgres"
 
   pgadmin:

@@ -5,9 +5,9 @@ import aiohttp_sqlalchemy as ahsa
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.asyncio import AsyncSession
 from routers import get_routes
+from config import i_config
 
-DB_ADDRESS = 'postgresql+asyncpg://postgres:postgres@pg_db/postgres'  # todo duplicate
-engine = create_async_engine(DB_ADDRESS, echo=True)
+engine = create_async_engine(i_config.DB_URL, echo=True)
 Session = orm.sessionmaker(engine, AsyncSession, expire_on_commit=False)
 
 
@@ -26,4 +26,4 @@ async def app_factory(re_loader: bool = True) -> web.Application:
 
 
 if __name__ == '__main__':
-    web.run_app(app_factory(), port=8000)
+    web.run_app(app_factory(), port=i_config.PORT)
