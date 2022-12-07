@@ -6,6 +6,7 @@ import aiohttp_sqlalchemy as ahsa
 from aiohttp import web
 from decorators.request_decorators import validation
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy_utils import Ltree
 
 from models import StaffModel, PositionModel
@@ -14,12 +15,10 @@ from validations import GetValidate, PostValidate, PatchValidate
 
 class StaffView(web.View, ahsa.SAMixin):
     @validation(class_validate=GetValidate, has_body=False)
-    async def get(self, validator: GetValidate):
+    async def get(self, validator: GetValidate, db_session: AsyncSession):
         _id = validator.input_schema.id if validator.input_schema else None
-        db_session = self.get_sa_session()
-        async with db_session.begin():
-            query = sa.select(StaffModel, PositionModel).join(PositionModel)
-            query = query.where(StaffModel.pk == _id).limit(1) if _id else query.order_by('path')
+        query = sa.select(StaffModel, PositionModel).join(PositionModel)
+        query = query.where(StaffModel.pk == _id).limit(1) if _id else query.order_by('path')
         result = await db_session.execute(query)
         result = result.scalars()
         data = {'staff': [], 'position': {}}
@@ -29,27 +28,23 @@ class StaffView(web.View, ahsa.SAMixin):
         return web.json_response(data)
 
     @validation(class_validate=PostValidate, has_body=True)
-    async def post(self, validator: PostValidate):
-        db_session = self.get_sa_session()
-        async with db_session.begin():
-            new_person = StaffModel(path=validator.parent_obj.path, **validator.input_schema.dict_by_db())
-            db_session.add(new_person)
-            try:
-                await db_session.flush()
-                new_person.path += Ltree(str(new_person.pk))
-                await db_session.commit()
-            except IntegrityError:
-                return web.json_response({'message': 'Duplicate Error'}, status=403)
+    async def post(self, validator: PostValidate, db_session: AsyncSession):
+        new_person = StaffModel(path=validator.parent_obj.path, **validator.input_schema.dict_by_db())
+        db_session.add(new_person)
+        try:
+            await db_session.flush()
+            new_person.path += Ltree(str(new_person.pk))
+            await db_session.commit()
+        except IntegrityError:
+            return web.json_response({'message': 'Duplicate Error'}, status=403)
         return web.json_response(new_person.serialized)
 
     @validation(class_validate=PatchValidate, has_body=True)
-    async def patch(self, validator: PatchValidate):
-        db_session = self.get_sa_session()
-        async with db_session.begin():
-            for key, value in validator.input_schema.dict().items():
-                setattr(validator.person, key, value) if value is not None else None
-            db_session.add(validator.person)
-            await db_session.commit()
+    async def patch(self, validator: PatchValidate, db_session: AsyncSession):
+        for key, value in validator.input_schema.dict().items():
+            setattr(validator.person, key, value) if value is not None else None
+        db_session.add(validator.person)
+        await db_session.commit()
         return web.json_response(validator.person.serialized)
 
 

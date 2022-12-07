@@ -15,7 +15,7 @@ def validation(class_validate, has_body: bool):
             )
             if not await validator.is_valid():
                 return web.json_response(validator.output_data, status=validator.status_code)
-            response = await func(*args, **kwargs, validator=validator)
+            response = await func(*args, **kwargs, validator=validator, db_session=db_session)
             return response
 
         return wrapped
