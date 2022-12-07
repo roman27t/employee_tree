@@ -70,7 +70,7 @@ class ValidateAbstract(ABC):
 
 class ValidatePost(ValidateAbstract):
     def init(self):
-        self.__parent_obj = None
+        self.__parent_obj: Optional[StaffModel] = None
 
     @property
     def parent_obj(self) -> StaffModel:

@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy_utils import Ltree
 
 from models import StaffModel, PositionModel
-from schemas import IdSchema, PatchSchema
+from schemas import IdSchema
 from validations import ValidatePost, ValidatePatch
 
 
@@ -39,9 +39,8 @@ class StaffView(web.View, ahsa.SAMixin):
         if not await validator.is_valid():
             return web.json_response(validator.output_data, status=validator.status_code)
 
-        input_schema = validator.input_schema
         async with db_session.begin():
-            new_person = StaffModel(path=validator.parent_obj.path, **input_schema.dict_by_db())
+            new_person = StaffModel(path=validator.parent_obj.path, **validator.input_schema.dict_by_db())
             db_session.add(new_person)
             try:
                 await db_session.flush()
@@ -60,9 +59,8 @@ class StaffView(web.View, ahsa.SAMixin):
         )
         if not await validator.is_valid():
             return web.json_response(validator.output_data, status=validator.status_code)
-        patch_schema: PatchSchema = validator.input_schema
         async with db_session.begin():
-            for key, value in patch_schema.dict().items():
+            for key, value in validator.input_schema.dict().items():
                 setattr(validator.person, key, value) if value is not None else None
             db_session.add(validator.person)
             await db_session.commit()
