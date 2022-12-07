@@ -7,6 +7,14 @@ from models import StaffModel, PositionModel
 from schemas import IdSchema, PostSchema, PatchSchema
 
 
+class InValidException(Exception):
+    def __init__(self, status_code: int, code: str, message: str = ''):
+        self.code = code
+        self.message = message or self.code.replace('_', ' ')
+        self.status_code = status_code
+        super().__init__({'status_code': self.status_code, 'message': self.message, 'code': self.code})
+
+
 class ValidateAbstract(ABC):
     def __init__(self, body: str, db_session, pk: int = None):
         self.body = body
@@ -50,12 +58,14 @@ class ValidateAbstract(ABC):
             except ValidationError as e:
                 self._set_error(status_code=400, code='bad_schema_id', message=str(e))
                 return False
-        for i in self.sync_validations():
-            if not i():
-                return False
-        for i in self.async_validations():
-            if not await i():
-                return False
+        try:
+            for i in self.sync_validations():
+                i()
+            for i in self.async_validations():
+                await i()
+        except InValidException as e:
+            self._set_error(status_code=e.status_code, code=e.code, message=e.message)
+            return False
         self.status_code = 200
         return True
 
@@ -75,17 +85,13 @@ class ValidatePost(ValidateAbstract):
         async with self.db_session.begin():
             self.parent_obj = await self.db_session.get(StaffModel, self.__input_schema.parent_id)
         if self.parent_obj is None:
-            self._set_error(code='bad_parent', status_code=400)
-            return False
-        return True
+            raise InValidException(status_code=400, code='bad_parent')
 
     def __set_input_data(self):
         try:
             self.__input_schema = PostSchema.parse_raw(self.body)
         except ValidationError as e:
-            self._set_error(status_code=400, code='bad_schema', message=str(e))
-            return False
-        return True
+            raise InValidException(status_code=400, code='bad_schema', message=str(e))
 
 
 class ValidatePatch(ValidateAbstract):
@@ -110,27 +116,20 @@ class ValidatePatch(ValidateAbstract):
         try:
             self.__input_schema: PatchSchema = PatchSchema.parse_raw(self.body)
         except ValidationError as e:
-            self._set_error(status_code=400, code='bad_schema', message=str(e))
-            return False
+            raise InValidException(status_code=400, code='bad_schema', message=str(e))
         if not self.__input_schema.has_values():
-            self._set_error(status_code=400, code='nothing_update')
-            return False
-        return True
+            raise InValidException(status_code=400, code='nothing_update')
 
     async def __validate_position(self):
         if not self.input_schema.position_id:
-            return True
+            return
         async with self.db_session.begin():
             position = await self.db_session.get(PositionModel, self.__input_schema.position_id)
         if position is None:
-            self._set_error(code='bad_position', status_code=400)
-            return False
-        return True
+            raise InValidException(status_code=400, code='bad_position')
 
     async def __get_person(self):
         async with self.db_session.begin():
             self.__person = await self.db_session.get(StaffModel, self.id_schema.id)
         if self.__person is None:
-            self._set_error(code='bad_person', status_code=400)
-            return False
-        return True
+            raise InValidException(status_code=400, code='bad_person')
