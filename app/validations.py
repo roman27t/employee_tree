@@ -2,8 +2,9 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 from pydantic import ValidationError
-from schemas import PostSchema, IdSchema, PatchSchema
+
 from models import StaffModel, PositionModel
+from schemas import IdSchema, PostSchema, PatchSchema
 
 
 class ValidateAbstract(ABC):
