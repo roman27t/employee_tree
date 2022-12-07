@@ -4,27 +4,23 @@ from decimal import Decimal
 import sqlalchemy as sa
 import aiohttp_sqlalchemy as ahsa
 from aiohttp import web
-from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy_utils import Ltree
 
 from models import StaffModel, PositionModel
-from schemas import IdSchema
-from validations import ValidatePost, ValidatePatch
+from validations import GetValidate, PostValidate, PatchValidate
 
 
 class StaffView(web.View, ahsa.SAMixin):
     async def get(self):
-        _id = self.request.match_info.get('id')
-        if _id:
-            try:
-                IdSchema(id=_id)
-            except ValidationError as e:
-                return web.json_response({'message': str(e)}, status=400)
         db_session = self.get_sa_session()
+        validator = GetValidate(db_session=db_session, pk=self.request.match_info.get('id'))
+        if not await validator.is_valid():
+            return web.json_response(validator.output_data, status=validator.status_code)
+        _id = validator.input_schema.id if validator.input_schema else None
         async with db_session.begin():
             query = sa.select(StaffModel, PositionModel).join(PositionModel)
-            query = query.where(StaffModel.pk == int(_id)).limit(1) if _id else query.order_by('path')
+            query = query.where(StaffModel.pk == _id).limit(1) if _id else query.order_by('path')
         result = await db_session.execute(query)
         result = result.scalars()
         data = {'staff': [], 'position': {}}
@@ -35,7 +31,7 @@ class StaffView(web.View, ahsa.SAMixin):
 
     async def post(self):
         db_session = self.get_sa_session()
-        validator = ValidatePost(body=await self.request.text(), db_session=db_session)
+        validator = PostValidate(body=await self.request.text(), db_session=db_session)
         if not await validator.is_valid():
             return web.json_response(validator.output_data, status=validator.status_code)
 
@@ -52,7 +48,7 @@ class StaffView(web.View, ahsa.SAMixin):
 
     async def patch(self):
         db_session = self.get_sa_session()
-        validator = ValidatePatch(
+        validator = PatchValidate(
             pk=self.request.match_info.get('id'),
             body=await self.request.text(),
             db_session=db_session,

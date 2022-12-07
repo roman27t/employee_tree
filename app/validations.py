@@ -15,7 +15,7 @@ class InValidException(Exception):
 
 
 class ValidateAbstract(ABC):
-    def __init__(self, body: str, db_session, pk: int = None):
+    def __init__(self, db_session, pk: int = None, body: str = ''):
         self.body = body
         self.pk = pk
         self.db_session = db_session
@@ -68,7 +68,13 @@ class ValidateAbstract(ABC):
         return True
 
 
-class ValidatePost(ValidateAbstract):
+class GetValidate(ValidateAbstract):
+    @property
+    def input_schema(self) -> Optional[IdSchema]:
+        return self.id_schema
+
+
+class PostValidate(ValidateAbstract):
     def init(self):
         self.__parent_obj: Optional[StaffModel] = None
 
@@ -99,7 +105,7 @@ class ValidatePost(ValidateAbstract):
             raise InValidException(status_code=400, code='bad_schema', message=str(e))
 
 
-class ValidatePatch(ValidateAbstract):
+class PatchValidate(ValidateAbstract):
     def init(self):
         self.__person: Optional[StaffModel] = None
 
