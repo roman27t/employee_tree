@@ -2,17 +2,9 @@ import json
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from pydantic import ValidationError
-
+from exceptions import InValidException
 from models import StaffModel, PositionModel
 from schemas import IdSchema, PostSchema, PatchSchema, PydBaseModel
-
-
-class InValidException(Exception):
-    def __init__(self, status_code: int, code: str, message: str = ''):
-        self.code = code
-        self.message = message
-        self.status_code = status_code
 
 
 class ValidateAbstract(ABC):
@@ -57,15 +49,9 @@ class ValidateAbstract(ABC):
             raise InValidException(status_code=400, code=code)
         return obj
 
-    def _create_schema(self, data, schema, code: str):
-        try:
-            return schema.parse_raw(data)
-        except ValidationError as e:
-            raise InValidException(status_code=400, code=code, message=str(e))
-
     def __validate_id_schema(self):
         if self.pk is not None:
-            self.id_schema = self._create_schema(schema=IdSchema, data=json.dumps({'id':self.pk}), code='bad_schema_id')
+            self.id_schema = IdSchema.parse_custom(data=json.dumps({'id':self.pk}), code='bad_schema_id')
 
     async def is_valid(self) -> bool:
         try:
@@ -108,7 +94,7 @@ class PostValidate(ValidateAbstract):
         self.__parent_obj = await self._get_db_obj(class_model=StaffModel, pk=_id, code='bad_parent')
 
     def __set_input_data(self):
-        self.__input_schema = self._create_schema(schema=PostSchema, data=self.body, code='bad_schema')
+        self.__input_schema = PostSchema.parse_custom(data=self.body, code='bad_schema')
 
 
 class PatchValidate(ValidateAbstract):
@@ -130,7 +116,7 @@ class PatchValidate(ValidateAbstract):
         return self.__validate_position, self.__get_person
 
     def __set_input_data(self):
-        self.__input_schema: PatchSchema = self._create_schema(schema=PatchSchema, data=self.body, code='bad_schema')
+        self.__input_schema: PatchSchema = PatchSchema.parse_custom(data=self.body, code='bad_schema')
         if not self.__input_schema.has_values():
             raise InValidException(status_code=400, code='nothing_update')
 

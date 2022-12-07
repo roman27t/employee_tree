@@ -1,10 +1,18 @@
 import datetime as dt
 from typing import Optional
 
-from pydantic import BaseModel, PositiveInt, constr, condecimal
+from pydantic import BaseModel, PositiveInt, constr, condecimal, ValidationError
+from exceptions import InValidException
 
 
 class PydBaseModel(BaseModel):
+    @classmethod
+    def parse_custom(cls, data, code: str):
+        try:
+            return cls.parse_raw(data)
+        except ValidationError as e:
+            raise InValidException(status_code=400, code=code, message=str(e))
+
     def has_values(self) -> bool:
         return len([i for i in self.dict().values() if i is not None]) > 0
 
