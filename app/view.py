@@ -4,6 +4,7 @@ from decimal import Decimal
 import sqlalchemy as sa
 import aiohttp_sqlalchemy as ahsa
 from aiohttp import web
+from decorators.request_decorators import validation
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy_utils import Ltree
 
@@ -12,12 +13,10 @@ from validations import GetValidate, PostValidate, PatchValidate
 
 
 class StaffView(web.View, ahsa.SAMixin):
-    async def get(self):
-        db_session = self.get_sa_session()
-        validator = GetValidate(db_session=db_session, pk=self.request.match_info.get('id'))
-        if not await validator.is_valid():
-            return web.json_response(validator.output_data, status=validator.status_code)
+    @validation(class_validate=GetValidate, has_body=False)
+    async def get(self, validator: GetValidate):
         _id = validator.input_schema.id if validator.input_schema else None
+        db_session = self.get_sa_session()
         async with db_session.begin():
             query = sa.select(StaffModel, PositionModel).join(PositionModel)
             query = query.where(StaffModel.pk == _id).limit(1) if _id else query.order_by('path')
@@ -29,12 +28,9 @@ class StaffView(web.View, ahsa.SAMixin):
             data['position'][i.position.pk] = i.position.serialized
         return web.json_response(data)
 
-    async def post(self):
+    @validation(class_validate=PostValidate, has_body=True)
+    async def post(self, validator: PostValidate):
         db_session = self.get_sa_session()
-        validator = PostValidate(body=await self.request.text(), db_session=db_session)
-        if not await validator.is_valid():
-            return web.json_response(validator.output_data, status=validator.status_code)
-
         async with db_session.begin():
             new_person = StaffModel(path=validator.parent_obj.path, **validator.input_schema.dict_by_db())
             db_session.add(new_person)
@@ -46,15 +42,9 @@ class StaffView(web.View, ahsa.SAMixin):
                 return web.json_response({'message': 'Duplicate Error'}, status=403)
         return web.json_response(new_person.serialized)
 
-    async def patch(self):
+    @validation(class_validate=PatchValidate, has_body=True)
+    async def patch(self, validator: PatchValidate):
         db_session = self.get_sa_session()
-        validator = PatchValidate(
-            pk=self.request.match_info.get('id'),
-            body=await self.request.text(),
-            db_session=db_session,
-        )
-        if not await validator.is_valid():
-            return web.json_response(validator.output_data, status=validator.status_code)
         async with db_session.begin():
             for key, value in validator.input_schema.dict().items():
                 setattr(validator.person, key, value) if value is not None else None
