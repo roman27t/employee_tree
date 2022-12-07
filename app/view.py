@@ -4,13 +4,13 @@ from decimal import Decimal
 import sqlalchemy as sa
 import aiohttp_sqlalchemy as ahsa
 from aiohttp import web
-from decorators.request_decorators import validation
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy_utils import Ltree
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import StaffModel, PositionModel
 from validations import GetValidate, PostValidate, PatchValidate
+from decorators.request_decorators import validation
 
 
 class StaffView(web.View, ahsa.SAMixin):
