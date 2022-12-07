@@ -24,7 +24,6 @@ class ValidateAbstract(ABC):
         self.message = ''
         self.id_schema: Optional[IdSchema] = None
         self.__input_schema = None
-        self.parent_obj = None
         self.init()
 
     def init(self):
@@ -44,10 +43,10 @@ class ValidateAbstract(ABC):
         self.code = code
         self.message = message or self.code.replace('_', ' ')
 
-    def sync_validations(self) -> tuple:
+    def _sync_validations(self) -> tuple:
         return ()
 
-    def async_validations(self) -> tuple:
+    def _async_validations(self) -> tuple:
         return ()
 
     def __validate_id_schema(self):
@@ -60,10 +59,8 @@ class ValidateAbstract(ABC):
     async def is_valid(self) -> bool:
         try:
             self.__validate_id_schema()
-            for i in self.sync_validations():
-                i()
-            for i in self.async_validations():
-                await i()
+            [i() for i in self._sync_validations()]
+            [await i() for i in self._async_validations()]
         except InValidException as e:
             self._set_error(status_code=e.status_code, code=e.code, message=e.message)
             return False
@@ -72,20 +69,27 @@ class ValidateAbstract(ABC):
 
 
 class ValidatePost(ValidateAbstract):
+    def init(self):
+        self.__parent_obj = None
+
+    @property
+    def parent_obj(self) -> StaffModel:
+        return self.__parent_obj
+
     @property
     def input_schema(self) -> PostSchema:
         return self.__input_schema
 
-    def sync_validations(self) -> tuple:
+    def _sync_validations(self) -> tuple:
         return (self.__set_input_data,)
 
-    def async_validations(self) -> tuple:
+    def _async_validations(self) -> tuple:
         return (self.__validate_parent_obj,)
 
     async def __validate_parent_obj(self):
         async with self.db_session.begin():
-            self.parent_obj = await self.db_session.get(StaffModel, self.__input_schema.parent_id)
-        if self.parent_obj is None:
+            self.__parent_obj = await self.db_session.get(StaffModel, self.__input_schema.parent_id)
+        if self.__parent_obj is None:
             raise InValidException(status_code=400, code='bad_parent')
 
     def __set_input_data(self):
@@ -107,10 +111,10 @@ class ValidatePatch(ValidateAbstract):
     def person(self) -> StaffModel:
         return self.__person
 
-    def sync_validations(self) -> tuple:
+    def _sync_validations(self) -> tuple:
         return (self.__set_input_data,)
 
-    def async_validations(self) -> tuple:
+    def _async_validations(self) -> tuple:
         return self.__validate_position, self.__get_person
 
     def __set_input_data(self):
