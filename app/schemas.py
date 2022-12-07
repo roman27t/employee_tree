@@ -14,7 +14,7 @@ from exceptions import InValidException
 
 class PydBaseModel(BaseModel):
     @classmethod
-    def parse_custom(cls, data, code: str):
+    def parse_custom(cls, data: str, code: str) -> 'PydBaseModel':
         try:
             return cls.parse_raw(data)
         except ValidationError as e:
