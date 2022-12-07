@@ -49,6 +49,13 @@ class ValidateAbstract(ABC):
     def _async_validations(self) -> tuple:
         return ()
 
+    async def _get_db_obj(self, class_model, pk: int, code: str):
+        async with self.db_session.begin():
+            obj = await self.db_session.get(class_model, pk)
+        if obj is None:
+            raise InValidException(status_code=400, code=code)
+        return obj
+
     def __validate_id_schema(self):
         if self.pk is not None:
             try:
@@ -93,10 +100,8 @@ class PostValidate(ValidateAbstract):
         return (self.__validate_parent_obj,)
 
     async def __validate_parent_obj(self):
-        async with self.db_session.begin():
-            self.__parent_obj = await self.db_session.get(StaffModel, self.__input_schema.parent_id)
-        if self.__parent_obj is None:
-            raise InValidException(status_code=400, code='bad_parent')
+        _id = self.__input_schema.parent_id
+        self.__parent_obj = await self._get_db_obj(class_model=StaffModel, pk=_id, code='bad_parent')
 
     def __set_input_data(self):
         try:
@@ -140,7 +145,4 @@ class PatchValidate(ValidateAbstract):
             raise InValidException(status_code=400, code='bad_position')
 
     async def __get_person(self):
-        async with self.db_session.begin():
-            self.__person = await self.db_session.get(StaffModel, self.id_schema.id)
-        if self.__person is None:
-            raise InValidException(status_code=400, code='bad_person')
+        self.__person = await self._get_db_obj(class_model=StaffModel, pk=self.id_schema.id, code='bad_person')
