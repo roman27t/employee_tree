@@ -1,3 +1,4 @@
+import json
 from abc import ABC, abstractmethod
 from typing import Optional
 
@@ -56,12 +57,15 @@ class ValidateAbstract(ABC):
             raise InValidException(status_code=400, code=code)
         return obj
 
+    def _create_schema(self, data, schema, code: str):
+        try:
+            return schema.parse_raw(data)
+        except ValidationError as e:
+            raise InValidException(status_code=400, code=code, message=str(e))
+
     def __validate_id_schema(self):
         if self.pk is not None:
-            try:
-                self.id_schema = IdSchema(id=self.pk)
-            except ValidationError as e:
-                raise InValidException(status_code=400, code='bad_schema_id', message=str(e))
+            self.id_schema = self._create_schema(schema=IdSchema, data=json.dumps({'id':self.pk}), code='bad_schema_id')
 
     async def is_valid(self) -> bool:
         try:
@@ -104,10 +108,7 @@ class PostValidate(ValidateAbstract):
         self.__parent_obj = await self._get_db_obj(class_model=StaffModel, pk=_id, code='bad_parent')
 
     def __set_input_data(self):
-        try:
-            self.__input_schema = PostSchema.parse_raw(self.body)
-        except ValidationError as e:
-            raise InValidException(status_code=400, code='bad_schema', message=str(e))
+        self.__input_schema = self._create_schema(schema=PostSchema, data=self.body, code='bad_schema')
 
 
 class PatchValidate(ValidateAbstract):
@@ -129,20 +130,14 @@ class PatchValidate(ValidateAbstract):
         return self.__validate_position, self.__get_person
 
     def __set_input_data(self):
-        try:
-            self.__input_schema: PatchSchema = PatchSchema.parse_raw(self.body)
-        except ValidationError as e:
-            raise InValidException(status_code=400, code='bad_schema', message=str(e))
+        self.__input_schema: PatchSchema = self._create_schema(schema=PatchSchema, data=self.body, code='bad_schema')
         if not self.__input_schema.has_values():
             raise InValidException(status_code=400, code='nothing_update')
 
     async def __validate_position(self):
         if not self.input_schema.position_id:
             return
-        async with self.db_session.begin():
-            position = await self.db_session.get(PositionModel, self.__input_schema.position_id)
-        if position is None:
-            raise InValidException(status_code=400, code='bad_position')
+        await self._get_db_obj(class_model=PositionModel, pk=self.__input_schema.position_id, code='bad_position')
 
     async def __get_person(self):
         self.__person = await self._get_db_obj(class_model=StaffModel, pk=self.id_schema.id, code='bad_person')
