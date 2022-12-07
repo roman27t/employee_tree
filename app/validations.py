@@ -4,15 +4,14 @@ from typing import Optional
 from pydantic import ValidationError
 
 from models import StaffModel, PositionModel
-from schemas import IdSchema, PostSchema, PatchSchema
+from schemas import IdSchema, PostSchema, PatchSchema, PydBaseModel
 
 
 class InValidException(Exception):
     def __init__(self, status_code: int, code: str, message: str = ''):
         self.code = code
-        self.message = message or self.code.replace('_', ' ')
+        self.message = message
         self.status_code = status_code
-        super().__init__({'status_code': self.status_code, 'message': self.message, 'code': self.code})
 
 
 class ValidateAbstract(ABC):
@@ -33,7 +32,7 @@ class ValidateAbstract(ABC):
 
     @property
     @abstractmethod
-    def input_schema(self):
+    def input_schema(self) -> PydBaseModel:
         pass
 
     @property
@@ -51,14 +50,16 @@ class ValidateAbstract(ABC):
     def async_validations(self) -> tuple:
         return ()
 
-    async def is_valid(self) -> bool:
+    def __validate_id_schema(self):
         if self.pk is not None:
             try:
                 self.id_schema = IdSchema(id=self.pk)
             except ValidationError as e:
-                self._set_error(status_code=400, code='bad_schema_id', message=str(e))
-                return False
+                raise InValidException(status_code=400, code='bad_schema_id', message=str(e))
+
+    async def is_valid(self) -> bool:
         try:
+            self.__validate_id_schema()
             for i in self.sync_validations():
                 i()
             for i in self.async_validations():
