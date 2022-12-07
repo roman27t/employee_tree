@@ -73,7 +73,7 @@ async def test_post_staff_duplicate(create_test_client, event_loop):
         (3, {'last_name': 'Tor', 'birthdate': dt.datetime.strptime('21.11.2000', '%d.%m.%Y').date().isoformat()}, 200),
         (3, {}, 400),
         (3, {'last_name': 'Rebrov', 'birthdate': 'bad_date'}, 400),
-        (3, {'last_name': 'Rebrov', 'position_id': 99999999, }, 400),
+        (3, {'last_name': 'Rebrov', 'position_id': 99999999}, 400),
         (99999999, {'last_name': 'Sidorov', 'first_name': 'Alexey'}, 400),
     ],
 )

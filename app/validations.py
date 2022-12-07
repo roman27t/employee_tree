@@ -65,10 +65,10 @@ class ValidatePost(ValidateAbstract):
         return self.__input_schema
 
     def sync_validations(self) -> tuple:
-        return self.__set_input_data,
+        return (self.__set_input_data,)
 
     def async_validations(self) -> tuple:
-        return self.__validate_parent_obj,
+        return (self.__validate_parent_obj,)
 
     async def __validate_parent_obj(self):
         async with self.db_session.begin():
@@ -100,7 +100,7 @@ class ValidatePatch(ValidateAbstract):
         return self.__person
 
     def sync_validations(self) -> tuple:
-        return self.__set_input_data,
+        return (self.__set_input_data,)
 
     def async_validations(self) -> tuple:
         return self.__validate_position, self.__get_person

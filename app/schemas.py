@@ -34,6 +34,7 @@ class PostSchema(PydBaseModel):
             del data[i]
         return data
 
+
 class PatchSchema(PydBaseModel):
     position_id: Optional[PositiveInt]
     last_name: Optional[constr(max_length=50)]

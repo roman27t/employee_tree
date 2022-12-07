@@ -40,9 +40,7 @@ class StaffModel(Base):
 
     position = relationship('PositionModel')
 
-    __table_args__ = (
-        UniqueConstraint('last_name', 'birthdate', 'position_id', name='unique_compound_key'),
-    )
+    __table_args__ = (UniqueConstraint('last_name', 'birthdate', 'position_id', name='unique_compound_key'),)
 
     @property
     def serialized(self) -> dict:
