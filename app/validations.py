@@ -2,9 +2,9 @@ import json
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from exceptions import InValidException
 from models import StaffModel, PositionModel
 from schemas import IdSchema, PostSchema, PatchSchema, PydBaseModel
+from exceptions import InValidException
 
 
 class ValidateAbstract(ABC):
