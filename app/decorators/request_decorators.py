@@ -2,7 +2,7 @@ import functools
 from aiohttp import web
 
 
-def validation(class_validate, has_body: bool):
+def validation(class_validate):
     def wrapper(func):
         @functools.wraps(func)
         async def wrapped(*args, **kwargs):
@@ -10,7 +10,7 @@ def validation(class_validate, has_body: bool):
             db_session = _self.get_sa_session()
             validator = class_validate(
                 pk=_self.request.match_info.get('id'),
-                body=await _self.request.text() if has_body else None,
+                body=None if _self.request.method == 'GET' else await _self.request.text(),
                 db_session=db_session,
             )
             if not await validator.is_valid():
