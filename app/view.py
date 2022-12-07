@@ -9,7 +9,8 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy_utils import Ltree
 
 from models import StaffModel, PositionModel
-from schemas import IdSchema, PostSchema, PatchSchema
+from schemas import IdSchema, PatchSchema
+from validations import ValidatePost, ValidatePatch
 
 
 class StaffView(web.View, ahsa.SAMixin):
@@ -33,20 +34,14 @@ class StaffView(web.View, ahsa.SAMixin):
         return web.json_response(data)
 
     async def post(self):
-        body = await self.request.text()
-        try:
-            input_schema = PostSchema.parse_raw(body)
-        except ValidationError as e:
-            return web.json_response({'message': str(e)}, status=400)
         db_session = self.get_sa_session()
-        async with db_session.begin():
-            parent_obj = await db_session.get(StaffModel, input_schema.parent_id)
-            if parent_obj is None:
-                return web.json_response({'message': 'bad parent'}, status=400)
+        validator = ValidatePost(body=await self.request.text(), db_session=db_session)
+        if not await validator.is_valid():
+            return web.json_response(validator.output_data, status=validator.status_code)
 
-            new_person = StaffModel(path=parent_obj.path)
-            for key, value in input_schema.dict().items():
-                setattr(new_person, key, value)
+        input_schema = validator.input_schema
+        async with db_session.begin():
+            new_person = StaffModel(path=validator.parent_obj.path, **input_schema.dict_by_db())
             db_session.add(new_person)
             try:
                 await db_session.flush()
@@ -57,30 +52,21 @@ class StaffView(web.View, ahsa.SAMixin):
         return web.json_response(new_person.serialized)
 
     async def patch(self):
-        body = await self.request.text()
-        try:
-            id_schema = IdSchema(id=self.request.match_info.get('id'))
-            patch_schema = PatchSchema.parse_raw(body)
-        except ValidationError as e:
-            return web.json_response({'message': str(e)}, status=400)
-        if not patch_schema.has_values():
-            return web.json_response({'message': 'nothing update'}, status=400)
         db_session = self.get_sa_session()
+        validator = ValidatePatch(
+            pk=self.request.match_info.get('id'),
+            body=await self.request.text(),
+            db_session=db_session,
+        )
+        if not await validator.is_valid():
+            return web.json_response(validator.output_data, status=validator.status_code)
+        patch_schema: PatchSchema = validator.input_schema
         async with db_session.begin():
-            if patch_schema.position_id:
-                position = await db_session.get(PositionModel, patch_schema.position_id)
-                if position is None:
-                    return web.json_response({'message': 'bad position'}, status=400)
-
-            person = await db_session.get(StaffModel, id_schema.id)
-            if person is None:
-                return web.json_response({'message': 'bad person'}, status=400)
             for key, value in patch_schema.dict().items():
-                if value is not None:
-                    setattr(person, key, value)
-            db_session.add(person)
+                setattr(validator.person, key, value) if value is not None else None
+            db_session.add(validator.person)
             await db_session.commit()
-        return web.json_response(person.serialized)
+        return web.json_response(validator.person.serialized)
 
 
 async def init_data(request):

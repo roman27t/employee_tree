@@ -27,6 +27,12 @@ class PostSchema(PydBaseModel):
     wage_rate: condecimal(max_digits=10, decimal_places=2)
     birthdate: dt.date
 
+    def dict_by_db(self) -> dict:
+        exclude_keys = ('parent_id',)
+        data = self.dict()
+        for i in exclude_keys:
+            del data[i]
+        return data
 
 class PatchSchema(PydBaseModel):
     position_id: Optional[PositiveInt]
