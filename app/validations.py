@@ -51,7 +51,7 @@ class ValidateAbstract(ABC):
 
     def __validate_id_schema(self):
         if self.pk is not None:
-            self.id_schema = IdSchema.parse_custom(data=json.dumps({'id':self.pk}), code='bad_schema_id')
+            self.id_schema = IdSchema.parse_custom(data=json.dumps({'id': self.pk}), code='bad_schema_id')
 
     async def is_valid(self) -> bool:
         try:
