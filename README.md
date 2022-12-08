@@ -54,6 +54,10 @@ Run tests:
 5. Наполнение БД (тестовое): GET /system/init_data/
 
 
+### Swagger
+http://localhost:8000/api/doc/
+
+
 ### Миграции
    ```bash
    docker-compose exec app sh
