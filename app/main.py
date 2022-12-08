@@ -1,11 +1,13 @@
 import aioreloader
 import aiohttp_sqlalchemy as ahsa
 from aiohttp import web
+from aiohttp_swagger import setup_swagger
 from sqlalchemy import orm
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 from config import i_config
 from routers import get_routes
+from tools.swagger_data import DATA_SWAGGER
 
 
 async def app_factory(re_loader: bool = False, db_url: str ='') -> web.Application:
@@ -19,6 +21,7 @@ async def app_factory(re_loader: bool = False, db_url: str ='') -> web.Applicati
         ],
     )
     app.add_routes(get_routes())
+    setup_swagger(app, definitions=DATA_SWAGGER)
     if re_loader:
         aioreloader.start()
     return app

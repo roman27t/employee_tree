@@ -14,6 +14,22 @@ from tools.init_data_db import init_data
 class StaffView(web.View, ahsa.SAMixin):
     @validation(class_validate=GetValidate)
     async def get(self, validator: GetValidate, db_session: AsyncSession):
+        """
+        ---
+        description: return all employees or one employee.
+        tags:
+        - StaffView
+        produces:
+        - application/json
+        parameters:
+        - in: path
+          name: id
+          required: true
+          type: integer
+        responses:
+            "200":  success
+            "405":  error
+        """
         _id = validator.input_schema.id if validator.input_schema else None
         query = sa.select(StaffModel, PositionModel).join(PositionModel)
         query = query.where(StaffModel.pk == _id).limit(1) if _id else query.order_by('path')
@@ -27,6 +43,24 @@ class StaffView(web.View, ahsa.SAMixin):
 
     @validation(class_validate=PostValidate)
     async def post(self, validator: PostValidate, db_session: AsyncSession):
+        """
+        ---
+        description: create one employee.
+        tags:
+        - StaffView
+        produces:
+        - application/json
+        parameters:
+        - in: body
+          name: body
+          description: Created user object
+          required: false
+          schema:
+              $ref: '#/definitions/StaffPost'
+        responses:
+            "200":  success
+            "405":  error
+        """
         new_person = StaffModel(path=validator.parent_obj.path, **validator.input_schema.dict_by_db())
         db_session.add(new_person)
         try:
@@ -39,6 +73,28 @@ class StaffView(web.View, ahsa.SAMixin):
 
     @validation(class_validate=PatchValidate)
     async def patch(self, validator: PatchValidate, db_session: AsyncSession):
+        """
+        ---
+        description: update one employee.
+        tags:
+        - StaffView
+        produces:
+        - application/json
+        parameters:
+        - in: path
+          name: id
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: Created user object
+          required: false
+          schema:
+              $ref: '#/definitions/StaffPatch'
+        responses:
+            "200":  success
+            "405":  error
+        """
         for key, value in validator.input_schema.dict().items():
             setattr(validator.person, key, value) if value is not None else None
         db_session.add(validator.person)
@@ -47,6 +103,13 @@ class StaffView(web.View, ahsa.SAMixin):
 
 
 async def init_data_view(request):
-    """service view"""
+    """
+    ---
+    description: service view
+    tags:
+    - System service
+    produces:
+    - application/json
+    """
     await init_data(sa_session=ahsa.get_session(request))
     return web.json_response({})
