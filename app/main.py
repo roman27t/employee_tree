@@ -7,11 +7,10 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from config import i_config
 from routers import get_routes
 
-engine = create_async_engine(i_config.DB_URL, echo=True)
-Session = orm.sessionmaker(engine, AsyncSession, expire_on_commit=False)
 
-
-async def app_factory(re_loader: bool = False) -> web.Application:
+async def app_factory(re_loader: bool = False, db_url: str ='') -> web.Application:
+    engine = create_async_engine(db_url or i_config.DB_URL, echo=True)
+    Session = orm.sessionmaker(engine, AsyncSession, expire_on_commit=False)
     app = web.Application()
     ahsa.setup(
         app,
