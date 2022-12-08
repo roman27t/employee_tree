@@ -28,7 +28,7 @@ class StaffView(web.View, ahsa.SAMixin):
           type: integer
         responses:
             "200":  success
-            "405":  error
+            "400":  error
         """
         _id = validator.input_schema.id if validator.input_schema else None
         query = sa.select(StaffModel, PositionModel).join(PositionModel)
@@ -59,7 +59,7 @@ class StaffView(web.View, ahsa.SAMixin):
               $ref: '#/definitions/StaffPost'
         responses:
             "200":  success
-            "405":  error
+            "400":  error
         """
         new_person = StaffModel(path=validator.parent_obj.path, **validator.input_schema.dict_by_db())
         db_session.add(new_person)
@@ -93,7 +93,7 @@ class StaffView(web.View, ahsa.SAMixin):
               $ref: '#/definitions/StaffPatch'
         responses:
             "200":  success
-            "405":  error
+            "400":  error
         """
         for key, value in validator.input_schema.dict().items():
             setattr(validator.person, key, value) if value is not None else None
