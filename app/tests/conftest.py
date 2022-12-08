@@ -10,8 +10,9 @@ from main import app_factory
 from models import Base
 from tools.init_data_db import init_data
 
-DB_URL='postgresql+asyncpg://postgres:postgres@pg_db/postgres_test'
-engine = create_async_engine(DB_URL, echo=True)
+_T_DB_NAME = 'postgres_test'
+_T_DB_URL=f'postgresql+asyncpg://postgres:postgres@pg_db/{_T_DB_NAME}'
+engine = create_async_engine(_T_DB_URL, echo=True)
 
 
 @pytest.fixture(scope="session")
@@ -33,9 +34,10 @@ def event_loop():
 @pytest.fixture
 async def create_test_client(aiohttp_client):
     async with engine.begin() as conn:
-        await conn.execute(text('CREATE EXTENSION IF NOT EXISTS ltree;'))
-        await conn.run_sync(Base.metadata.drop_all)
-        await conn.run_sync(Base.metadata.create_all)
+        if _T_DB_NAME in engine.url:
+            await conn.execute(text('CREATE EXTENSION IF NOT EXISTS ltree;'))
+            await conn.run_sync(Base.metadata.drop_all)
+            await conn.run_sync(Base.metadata.create_all)
     async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
     await init_data(sa_session=async_session())
-    return await aiohttp_client(await app_factory(db_url=DB_URL))
+    return await aiohttp_client(await app_factory(db_url=_T_DB_URL))
