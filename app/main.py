@@ -1,8 +1,8 @@
 import aioreloader
 import aiohttp_sqlalchemy as ahsa
 from aiohttp import web
-from aiohttp_swagger import setup_swagger
 from sqlalchemy import orm
+from aiohttp_swagger import setup_swagger
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
 from config import i_config

@@ -7,8 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import StaffModel, PositionModel
 from validations import GetValidate, PostValidate, PatchValidate
-from decorators.request_decorators import validation
 from tools.init_data_db import init_data
+from decorators.request_decorators import validation
 
 
 class StaffView(web.View, ahsa.SAMixin):
