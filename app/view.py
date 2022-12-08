@@ -59,7 +59,8 @@ class StaffView(web.View, ahsa.SAMixin):
               $ref: '#/definitions/StaffPost'
         responses:
             "200":  success
-            "400":  error
+            "400":  Validation error
+            "403":  Duplicate Error
         """
         new_person = StaffModel(path=validator.parent_obj.path, **validator.input_schema.dict_by_db())
         db_session.add(new_person)
