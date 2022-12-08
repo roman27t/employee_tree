@@ -2,14 +2,13 @@ import sys
 import asyncio
 
 import pytest
-
-from sqlalchemy.orm import sessionmaker
-from models import Base
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy import text
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
-from app.main import app_factory
-from app.tools.init_data_db import init_data
+from main import app_factory
+from models import Base
+from tools.init_data_db import init_data
 
 DB_URL='postgresql+asyncpg://postgres:postgres@pg_db/postgres_test'
 engine = create_async_engine(DB_URL, echo=True)
