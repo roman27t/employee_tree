@@ -4,8 +4,6 @@ import datetime as dt
 
 import pytest
 
-# todo отдельную DB под тесты
-
 
 @pytest.mark.asyncio
 async def test_gen_position(create_test_client, event_loop):
