@@ -6,7 +6,7 @@
     ``` 
 2. После успешного запуска необходимо - install extension for DB:
     ```bash
-   docker-compose exec app sh
+   docker-compose exec pg_db sh
    psql -U postgres --dbname=postgres
    ```
 и далее
@@ -19,6 +19,11 @@
    alembic upgrade head
    ```
 Run tests:
+   ```bash
+   docker-compose exec pg_db sh
+   psql -U postgres --dbname=postgres
+   CREATE DATABASE postgres_test;
+   ```
    ```bash
    docker-compose exec app sh
    pytest tests -v -s
@@ -35,7 +40,8 @@ Run tests:
       "first_name": "Roman", 
       "parent_id": 1, 
       "wage_rate": 99777.01, 
-      "position_id": 2
+      "position_id": 2,
+      "birthdate": "2000-12-22"
    }
    ```
 4. Редактирование сотрудника: PATCH /staff/id/
