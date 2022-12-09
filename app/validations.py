@@ -4,7 +4,7 @@ from typing import Optional
 
 from models import StaffModel, PositionModel
 from schemas import IdSchema, PostSchema, PatchSchema, PydBaseModel
-from exceptions import InValidException
+from tools.exceptions import InValidException
 
 
 class ValidateAbstract(ABC):

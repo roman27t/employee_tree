@@ -9,7 +9,7 @@ from pydantic import (
     condecimal,
 )
 
-from exceptions import InValidException
+from tools.exceptions import InValidException
 
 
 class PydBaseModel(BaseModel):
