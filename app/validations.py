@@ -1,6 +1,7 @@
 import json
 from abc import ABC, abstractmethod
 from typing import Optional
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import StaffModel, PositionModel
 from schemas import IdSchema, PostSchema, PatchSchema, PydBaseModel
@@ -8,15 +9,15 @@ from tools.exceptions import InValidException
 
 
 class ValidateAbstract(ABC):
-    def __init__(self, db_session, pk: int = None, body: str = ''):
+    def __init__(self, db_session: AsyncSession, pk: int = None, body: str = ''):
         self.body = body
         self.pk = pk
         self.db_session = db_session
         self.code = ''
-        self.status_code = None
+        self.status_code: Optional[int] = None
         self.message = ''
         self.id_schema: Optional[IdSchema] = None
-        self.__input_schema = None
+        self.__input_schema: Optional[PydBaseModel] = None
         self.init()
 
     def init(self):
