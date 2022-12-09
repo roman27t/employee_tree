@@ -1,4 +1,5 @@
 import datetime as dt
+import random
 
 import sqlalchemy as sa
 from sqlalchemy import ForeignKey, UniqueConstraint, orm
@@ -44,6 +45,7 @@ class StaffModel(Base):
 
     @property
     def serialized(self) -> dict:
+        hexadecimal = ["#" + ''.join([random.choice('ABCDEF0123456789') for _ in range(6)])]
         return {
             'pk': self.pk,
             'last_name': self.last_name,
@@ -54,4 +56,7 @@ class StaffModel(Base):
             'wage_rate': float(self.wage_rate),
             'birthdate': self.birthdate.isoformat(),
             'hiring_date': self.hiring_date.date().isoformat(),
+            '_parent_path': '.'.join(str(self.path).split('.')[:-1]) or str(self.path),
+            '_level': str(self.path).count('.'),
+            '_color': hexadecimal[0],
         }

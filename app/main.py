@@ -1,4 +1,6 @@
+import aiohttp_jinja2
 import aioreloader
+import jinja2
 import aiohttp_sqlalchemy as ahsa
 from aiohttp import web
 from sqlalchemy import orm
@@ -20,6 +22,7 @@ async def app_factory(re_loader: bool = False) -> web.Application:
             ahsa.bind(Session),
         ],
     )
+    aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader('templates'))
     app.add_routes(get_routes())
     setup_swagger(app, definitions=DATA_SWAGGER)
     if re_loader:

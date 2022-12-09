@@ -1,4 +1,5 @@
 import sqlalchemy as sa
+import aiohttp_jinja2
 import aiohttp_sqlalchemy as ahsa
 from aiohttp import web
 from sqlalchemy.exc import IntegrityError
@@ -9,6 +10,20 @@ from models import StaffModel, PositionModel
 from validations import GetValidate, PostValidate, PatchValidate
 from tools.init_data_db import init_data
 from decorators.request_decorators import validation
+
+
+async def _staff_get_core(validator: GetValidate, db_session: AsyncSession) -> dict:
+    _id = validator.input_schema.id if validator.input_schema else None
+    query = sa.select(StaffModel, PositionModel).join(PositionModel)
+    query = query.where(StaffModel.pk == _id).limit(1) if _id else query.order_by('path')
+    result = await db_session.execute(query)
+    result = result.scalars()
+    data = {'staff': {}, 'position': {}, '_levels': {}}
+    for i in result:
+        data['staff'][str(i.path)] = i.serialized
+        data['position'][i.position.pk] = i.position.serialized
+        data['_levels'].setdefault(i.serialized['_level'], []).append(str(i.path))  #  эту логику в front_side
+    return data
 
 
 class StaffView(web.View, ahsa.SAMixin):
@@ -30,15 +45,7 @@ class StaffView(web.View, ahsa.SAMixin):
             "200":  success
             "400":  error
         """
-        _id = validator.input_schema.id if validator.input_schema else None
-        query = sa.select(StaffModel, PositionModel).join(PositionModel)
-        query = query.where(StaffModel.pk == _id).limit(1) if _id else query.order_by('path')
-        result = await db_session.execute(query)
-        result = result.scalars()
-        data = {'staff': [], 'position': {}}
-        for i in result:
-            data['staff'].append(i.serialized)
-            data['position'][i.position.pk] = i.position.serialized
+        data = await _staff_get_core(validator=validator, db_session=db_session)
         return web.json_response(data)
 
     @validation(class_validate=PostValidate)
@@ -114,3 +121,10 @@ async def init_data_view(request):
     """
     await init_data(sa_session=ahsa.get_session(request))
     return web.json_response({})
+
+
+class StaffTemplateView(web.View, ahsa.SAMixin):
+    @validation(class_validate=GetValidate)
+    async def get(self, validator: GetValidate, db_session: AsyncSession):
+        data = await _staff_get_core(validator=validator, db_session=db_session)
+        return aiohttp_jinja2.render_template('index.html', self.request, data)
