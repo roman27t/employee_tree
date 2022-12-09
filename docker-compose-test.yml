@@ -34,5 +34,8 @@ services:
     restart: always
     networks:
       - app-network-test
-    env_file:
-      - app/environment-test.ini
+    environment:
+      DB_URL: "postgresql+asyncpg://postgres:postgres@pg_db-test/postgres_test"
+      PORT: 9000
+      PYTHONPATH: "/app"
+      DEBUG: "0"

@@ -39,8 +39,11 @@ services:
     restart: always
     networks:
       - app-network
-    env_file:
-      - app/environment.ini
+    environment:
+      DB_URL: "postgresql+asyncpg://postgres:postgres@pg_db/postgres"
+      PORT: 8000
+      PYTHONPATH: "/app"
+      DEBUG: "1"
 
   pgadmin:
     image: dpage/pgadmin4
