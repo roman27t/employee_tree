@@ -11,7 +11,7 @@ from models import Base
 from tools.init_data_db import init_data
 
 _T_DB_NAME = 'postgres_test'
-_T_DB_URL=f'postgresql+asyncpg://postgres:postgres@pg_db/{_T_DB_NAME}'
+_T_DB_URL=f'postgresql+asyncpg://postgres:postgres@pg_db-test/{_T_DB_NAME}'
 engine = create_async_engine(_T_DB_URL, echo=True)
 
 

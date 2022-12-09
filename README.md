@@ -20,13 +20,8 @@
    ```
 Run tests:
    ```bash
-   docker-compose exec pg_db sh
-   psql -U postgres --dbname=postgres
-   CREATE DATABASE postgres_test;
-   ```
-   ```bash
-   docker-compose exec app sh
-   pytest tests -v -s
+   docker-compose -f docker-compose-test.yml up --build 
+   docker-compose -f docker-compose-test.yml run app-test pytest -s -v
    ```
 
 
