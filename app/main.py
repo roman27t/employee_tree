@@ -10,8 +10,8 @@ from routers import get_routes
 from tools.swagger_data import DATA_SWAGGER
 
 
-async def app_factory(re_loader: bool = False, db_url: str ='') -> web.Application:
-    engine = create_async_engine(db_url or i_config.DB_URL, echo=True)
+async def app_factory(re_loader: bool = False) -> web.Application:
+    engine = create_async_engine(i_config.DB_URL, echo=True)
     Session = orm.sessionmaker(engine, AsyncSession, expire_on_commit=False)
     app = web.Application()
     ahsa.setup(
