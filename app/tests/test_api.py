@@ -1,6 +1,7 @@
 import json
 import random
 import datetime as dt
+from typing import Optional
 
 import pytest
 
@@ -32,9 +33,9 @@ async def test_get_staff(create_test_client, event_loop, url: str, status_code: 
         assert bool(data['position']) is has_data
 
 
-def __create_data_person() -> dict:
+def __create_data_person(exclude_fields: Optional[tuple[str]] = None) -> dict:
     birthdate = dt.datetime.strptime('21.11.1940', '%d.%m.%Y').date() + dt.timedelta(days=random.randint(1, 21900))
-    return {
+    person = {
         'last_name': 'Ivanov',
         'first_name': 'Roman',
         'parent_id': random.randint(2, 3),
@@ -42,16 +43,26 @@ def __create_data_person() -> dict:
         'position_id': random.randint(1, 7),
         'birthdate': birthdate.isoformat(),
     }
+    for field in exclude_fields or []:
+        del person[field]
+    return person
 
 
+@pytest.mark.parametrize(
+    'person,status_code,',
+    [
+        (__create_data_person(), 200),
+        (__create_data_person(exclude_fields=('birthdate',)), 400),
+    ],
+)
 @pytest.mark.asyncio
-async def test_post_staff(create_test_client, event_loop):
+async def test_post_staff(create_test_client, event_loop, person: dict, status_code: int):
     client = await create_test_client
-    input_data = __create_data_person()
-    response = await client.post('/staff/', data=json.dumps(input_data))
-    assert response.status == 200
+    response = await client.post('/staff/', data=json.dumps(person))
+    assert response.status == status_code
     data = await response.json()
-    assert data['last_name'] == input_data['last_name']
+    if status_code == 200:
+        assert data['last_name'] == person['last_name']
 
 
 @pytest.mark.asyncio
