@@ -22,7 +22,7 @@ async def app_factory(re_loader: bool = False) -> web.Application:
             ahsa.bind(Session),
         ],
     )
-    aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader('templates'))
+    aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader('templates'), enable_async=True)
     app.add_routes(get_routes())
     setup_swagger(app, definitions=DATA_SWAGGER)
     if re_loader:

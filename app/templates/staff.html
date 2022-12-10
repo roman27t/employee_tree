@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Last name</th>
+        <th scope="col">First name</th>
+        <th scope="col">Middle name</th>
+        <th scope="col">Job title</th>
+        <th scope="col">Hiring date</th>
+        <th scope="col">Rate</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th scope="row">{{ _staff.pk }}</th>
+        <td>{{ _staff.last_name }}</td>
+        <td>{{ _staff.first_name }}</td>
+        <td>{{ _staff.middle_name }}</td>
+        <td>{{ position[_staff.position_id].name }}</td>
+        <td>{{ _staff.hiring_date }}</td>
+        <td>{{ _staff.wage_rate }}</td>
+    </tr>
+    </tbody>
+</table>
+
+
+<a class="btn btn-primary" href="/api/doc/?html=1#!/StaffView/post_staff" role="button">Add</a>
+<a class="btn btn-primary" href="/api/doc/?html=1#!/StaffView/patch_staff_id" role="button">Patch</a>
+{% endblock %}}

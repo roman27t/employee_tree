@@ -7,14 +7,16 @@ from sqlalchemy_utils import Ltree
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import StaffModel, PositionModel
-from tools.front_side import front_staff_tree
+from tools.front_side import front_staff_tree, front_staff_by_id
 from validations import GetValidate, PostValidate, PatchValidate
 from tools.init_data_db import init_data
 from decorators.request_decorators import validation, response_formatter
 
 
 class StaffView(web.View, ahsa.SAMixin):
-    @response_formatter(template='staff_tree.html', front_handler=front_staff_tree)
+    @response_formatter(
+        template='staff_tree.html', template_id='staff.html',handler=front_staff_tree, handler_id=front_staff_by_id,
+    )
     @validation(class_validate=GetValidate)
     async def get(self, validator: GetValidate, db_session: AsyncSession) -> dict:
         """
@@ -120,6 +122,5 @@ async def init_data_view(request):
 
 
 class StaffTemplateView(web.View, ahsa.SAMixin):
-    # @validation(class_validate=GetValidate) , validator: GetValidate, db_session: AsyncSession
     async def get(self):
-        return aiohttp_jinja2.render_template('index.html', self.request, {})
+        return await aiohttp_jinja2.render_template_async('index.html', self.request, {'index': True})

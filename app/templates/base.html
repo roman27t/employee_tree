@@ -7,6 +7,11 @@
     <meta charset="UTF-8">
 </head>
     <body>
+    <div class="container-md mt-5">
+        {% if not index %}
+            <a class="btn btn-primary" href="{{ url('index') }}" role="button">Index</a>
+        {% endif %}
+    </div>
         <div class="container-md mt-5">
             {% block content %}{% endblock %}
         </div>
