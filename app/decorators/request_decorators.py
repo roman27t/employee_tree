@@ -1,4 +1,5 @@
 import functools
+import aiohttp_jinja2
 
 from aiohttp import web
 
@@ -20,6 +21,21 @@ def validation(class_validate):
                 return web.json_response(validator.output_data, status=validator.status_code)
             response = await func(*args, **kwargs, validator=validator, db_session=db_session)
             return response
+
+        return wrapped
+
+    return wrapper
+
+
+def response_formatter(template: str = ''):
+    def wrapper(func):
+        @functools.wraps(func)
+        async def wrapped(*args, **kwargs):
+            _self = args[0]
+            data = await func(*args, **kwargs)
+            if template and _self.request.query.get('html') == '1':
+                return aiohttp_jinja2.render_template(template, _self.request, data)
+            return web.json_response(data)
 
         return wrapped
 

@@ -5,10 +5,10 @@ from view import StaffView, init_data_view, StaffTemplateView
 
 def get_routes() -> list:
     return [
-        web.get('/', StaffTemplateView),
+        web.get('/', StaffTemplateView, name='index'),
         # API
-        web.get('/staff/', StaffView),
-        web.get('/staff/{id}/', StaffView),
+        web.get('/staff/', StaffView, name='staff_tree'),
+        web.get('/staff/{id}/', StaffView, name='staff'),
         web.post('/staff/', StaffView),
         web.patch('/staff/{id}/', StaffView),
         # service urls
