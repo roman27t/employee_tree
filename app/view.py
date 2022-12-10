@@ -7,13 +7,14 @@ from sqlalchemy_utils import Ltree
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import StaffModel, PositionModel
+from tools.front_side import front_staff_tree
 from validations import GetValidate, PostValidate, PatchValidate
 from tools.init_data_db import init_data
 from decorators.request_decorators import validation, response_formatter
 
 
 class StaffView(web.View, ahsa.SAMixin):
-    @response_formatter(template='staff_tree.html')
+    @response_formatter(template='staff_tree.html', front_handler=front_staff_tree)
     @validation(class_validate=GetValidate)
     async def get(self, validator: GetValidate, db_session: AsyncSession) -> dict:
         """
@@ -37,11 +38,10 @@ class StaffView(web.View, ahsa.SAMixin):
         query = query.where(StaffModel.pk == _id).limit(1) if _id else query.order_by('path')
         result = await db_session.execute(query)
         result = result.scalars()
-        data = {'staff': {}, 'position': {}, '_levels': {}}
+        data = {'staff': {}, 'position': {}}
         for i in result:
-            data['staff'][str(i.path)] = i.serialized
+            data['staff'][i.pk] = i.serialized
             data['position'][i.position.pk] = i.position.serialized
-            data['_levels'].setdefault(i.serialized['_level'], []).append(str(i.path))  # эту логику в front_side
         return data
 
     @validation(class_validate=PostValidate)

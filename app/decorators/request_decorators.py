@@ -1,4 +1,6 @@
 import functools
+from typing import Callable
+
 import aiohttp_jinja2
 
 from aiohttp import web
@@ -27,13 +29,14 @@ def validation(class_validate):
     return wrapper
 
 
-def response_formatter(template: str = ''):
+def response_formatter(template: str = '', front_handler: Callable = None):
     def wrapper(func):
         @functools.wraps(func)
         async def wrapped(*args, **kwargs):
             _self = args[0]
             data = await func(*args, **kwargs)
             if template and _self.request.query.get('html') == '1':
+                data = front_handler(data) if front_handler else data
                 return aiohttp_jinja2.render_template(template, _self.request, data)
             return web.json_response(data)
 

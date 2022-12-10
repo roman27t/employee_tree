@@ -3,9 +3,9 @@
 {% block content %}
   {% for level in _levels %}
         {% for i in _levels[level] %}
-            <span style="color:{{staff[staff[i]._parent_path]._color}}">|{{i}}</span>
-            <span style="color:{{staff[i]._color}}">
-                {{position[staff[i].position_id].name}} {{staff[i].last_name}} {{staff[i].first_name}} |
+            <span style="color:{{_staff_path[_staff_path[i]._parent_path]._color}}">|{{i}}</span>
+            <span style="color:{{_staff_path[i]._color}}">
+                {{position[_staff_path[i].position_id].name}} {{_staff_path[i].last_name}} {{_staff_path[i].first_name}} |
             </span>
         {% endfor %}
         <br>
