@@ -7,6 +7,7 @@ from sqlalchemy_utils import Ltree
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import StaffModel, PositionModel
+from tools.db_helper import update_db_object
 from validations.position_validations import PostPositionValidate, PatchPositionValidate
 from validations.staff_validations import PostStaffValidate, PatchStaffValidate
 from validations.base_validations import GetValidate
@@ -109,10 +110,7 @@ class StaffView(web.View, ahsa.SAMixin):
             "200":  success
             "400":  error
         """
-        for key, value in validator.input_schema.dict().items():
-            setattr(validator.obj_model, key, value) if value is not None else None
-        db_session.add(validator.obj_model)
-        await db_session.commit()
+        await update_db_object(db_session=db_session, obj_model=validator.obj_model, data=validator.input_schema.dict())
         return web.json_response(validator.obj_model.serialized)
 
 
@@ -196,10 +194,7 @@ class PositionView(web.View, ahsa.SAMixin):
             "200":  success
             "400":  error
         """
-        for key, value in validator.input_schema.dict().items():
-            setattr(validator.obj_model, key, value) if value is not None else None
-        db_session.add(validator.obj_model)
-        await db_session.commit()
+        await update_db_object(db_session=db_session, obj_model=validator.obj_model, data=validator.input_schema.dict())
         return web.json_response(validator.obj_model.serialized)
 
 
