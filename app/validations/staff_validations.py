@@ -6,7 +6,7 @@ from tools.exceptions import InValidException
 from validations.abstract_validations import ValidateAbstract
 
 
-class PostValidate(ValidateAbstract):
+class PostStaffValidate(ValidateAbstract):
     def init(self):
         self.__obj: Optional[StaffModel] = None
 
@@ -32,7 +32,7 @@ class PostValidate(ValidateAbstract):
         self.__input_schema = PostStaffSchema.parse_custom(data=self.body, code='bad_schema')
 
 
-class PatchValidate(ValidateAbstract):
+class PatchStaffValidate(ValidateAbstract):
     def init(self):
         self.__obj: Optional[StaffModel] = None
 

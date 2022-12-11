@@ -7,7 +7,7 @@ from sqlalchemy_utils import Ltree
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import StaffModel, PositionModel
-from validations.staff_validations import PostValidate, PatchValidate
+from validations.staff_validations import PostStaffValidate, PatchStaffValidate
 from validations.base_validations import GetValidate
 from tools.front_side import front_staff_tree, front_staff_by_id
 from consts.page_format import ContextFields
@@ -53,8 +53,8 @@ class StaffView(web.View, ahsa.SAMixin):
             return web.json_response({'code': 'not_exist', 'message': 'not_exist'}, status=400)
         return web.json_response(data)
 
-    @validation(class_validate=PostValidate)
-    async def post(self, validator: PostValidate, db_session: AsyncSession):
+    @validation(class_validate=PostStaffValidate)
+    async def post(self, validator: PostStaffValidate, db_session: AsyncSession):
         """
         ---
         description: create one employee.
@@ -84,8 +84,8 @@ class StaffView(web.View, ahsa.SAMixin):
             return web.json_response({'message': 'Duplicate Error'}, status=403)
         return web.json_response(new_person.serialized)
 
-    @validation(class_validate=PatchValidate)
-    async def patch(self, validator: PatchValidate, db_session: AsyncSession):
+    @validation(class_validate=PatchStaffValidate)
+    async def patch(self, validator: PatchStaffValidate, db_session: AsyncSession):
         """
         ---
         description: update one employee.
@@ -144,8 +144,8 @@ class PositionView(web.View, ahsa.SAMixin):
             return web.json_response({'code': 'not_exist', 'message': 'not exist'}, status=400)
         return web.json_response(data)
 
-    # @validation(class_validate=PostValidate)
-    # async def post(self, validator: PostValidate, db_session: AsyncSession):
+    # @validation(class_validate=PostStaffValidate)
+    # async def post(self, validator: PostStaffValidate, db_session: AsyncSession):
     #     new_person = StaffModel(path=validator.obj_model.path, **validator.input_schema.dict_by_db())
     #     db_session.add(new_person)
     #     try:
