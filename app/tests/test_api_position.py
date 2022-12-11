@@ -38,3 +38,22 @@ async def test_post_position(create_test_client, event_loop, input_data: dict, s
     data = await response.json()
     if status_code == 200:
         assert data['name'] == input_data['name'].lower()
+
+
+@pytest.mark.parametrize(
+    'pk,input_data,status_code,',
+    [
+        (3, {'name': 'accountant', 'detail': 'accountant detail'}, 200),
+        (3, {'detail': 'detail'}, 200),
+        (3, {}, 400),
+        (99999999, {'name': 'accountant', 'detail': 'detail detail'}, 400),
+    ],
+)
+@pytest.mark.asyncio
+async def test_patch_position(create_test_client, event_loop, pk: int, input_data: dict, status_code: int):
+    client = await create_test_client
+    response = await client.patch(f'/position/{pk}/', data=json.dumps(input_data))
+    assert response.status == status_code
+    data = await response.json()
+    if status_code == 200:
+        assert data

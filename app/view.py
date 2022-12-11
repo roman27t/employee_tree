@@ -7,7 +7,7 @@ from sqlalchemy_utils import Ltree
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import StaffModel, PositionModel
-from validations.position_validations import PostPositionValidate
+from validations.position_validations import PostPositionValidate, PatchPositionValidate
 from validations.staff_validations import PostStaffValidate, PatchStaffValidate
 from validations.base_validations import GetValidate
 from tools.front_side import front_staff_tree, front_staff_by_id
@@ -154,6 +154,14 @@ class PositionView(web.View, ahsa.SAMixin):
         except IntegrityError:
             return web.json_response({'message': 'Duplicate Error'}, status=403)
         return web.json_response(new_position.serialized)
+
+    @validation(class_validate=PatchPositionValidate)
+    async def patch(self, validator: PatchPositionValidate, db_session: AsyncSession):
+        for key, value in validator.input_schema.dict().items():
+            setattr(validator.obj_model, key, value) if value is not None else None
+        db_session.add(validator.obj_model)
+        await db_session.commit()
+        return web.json_response(validator.obj_model.serialized)
 
 
 async def init_data_view(request):

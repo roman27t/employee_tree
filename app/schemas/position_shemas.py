@@ -11,7 +11,7 @@ class PostPositionSchema(PydBaseModel):
 
     @validator('name')
     def upgrade_name(cls, v: str) -> str:
-        return v.lower()
+        return v.lower() if v else v
 
 
 class PatchPositionSchema(PostPositionSchema):

@@ -13,6 +13,7 @@ def get_routes() -> list:
         web.get('/position/', PositionView, name='positions'),
         web.get('/position/{id}/', PositionView, name='position'),
         web.post('/position/', PositionView, name='position_post'),
+        web.patch('/position/{id}/', PositionView, name='position_patch'),
         # service urls
         web.get('/system/init_data/', init_data_view, name='init_db'),
     ]
