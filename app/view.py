@@ -6,6 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy_utils import Ltree
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from consts.page_format import ContextFields
 from models import StaffModel, PositionModel
 from tools.front_side import front_staff_tree, front_staff_by_id
 from validations import GetValidate, PostValidate, PatchValidate
@@ -125,5 +126,5 @@ async def init_data_view(request):
 
 class StaffTemplateView(web.View, ahsa.SAMixin):
     async def get(self):
-        context = {'index': True, 'status': True}
+        context = {ContextFields.index: True, ContextFields.status: True}
         return await aiohttp_jinja2.render_template_async('index.html', self.request, context)

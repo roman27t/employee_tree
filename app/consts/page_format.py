@@ -9,3 +9,9 @@ class RequestFormat:
     @property
     def param_encode(self) -> str:
         return f'{self.html}={self.value}'
+
+
+@dataclass(frozen=True)
+class ContextFields:
+    status: str = 'status'
+    index: str = 'index'
