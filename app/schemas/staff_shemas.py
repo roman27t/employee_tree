@@ -1,16 +1,9 @@
-import re
 import datetime as dt
-from typing import Optional
+import re
 from decimal import Decimal
+from typing import Optional
 
-from pydantic import (
-    BaseModel,
-    PositiveInt,
-    ValidationError,
-    constr,
-    validator,
-    condecimal,
-)
+from pydantic import BaseModel, ValidationError, PositiveInt, constr, validator, condecimal
 
 from tools.exceptions import InValidException
 

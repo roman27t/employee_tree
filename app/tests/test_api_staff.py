@@ -5,7 +5,7 @@ from typing import Optional
 
 import pytest
 
-from schemas import MIN_RATE
+from schemas.staff_shemas import MIN_RATE
 
 
 @pytest.mark.asyncio

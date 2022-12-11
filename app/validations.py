@@ -5,7 +5,7 @@ from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import StaffModel, PositionModel
-from schemas import IdSchema, PostSchema, PatchSchema, PydBaseModel
+from schemas.staff_shemas import PydBaseModel, IdSchema, PostSchema, PatchSchema
 from tools.exceptions import InValidException
 
 
