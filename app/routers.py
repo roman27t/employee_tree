@@ -1,17 +1,15 @@
 from aiohttp import web
 
-from view import StaffView, init_data_view, StaffTemplateView, PositionView
+from view import StaffView, PositionView, StaffTemplateView, init_data_view
 
 
 def get_routes() -> list:
     return [
         web.get('/', StaffTemplateView, name='index'),
-
         web.get('/staff/', StaffView, name='staff_tree'),
         web.get('/staff/{id}/', StaffView, name='staff'),
         web.post('/staff/', StaffView),
         web.patch('/staff/{id}/', StaffView),
-
         web.get('/position/', PositionView, name='positions'),
         web.get('/position/{id}/', PositionView, name='position'),
         # service urls

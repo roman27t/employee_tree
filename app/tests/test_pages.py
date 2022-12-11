@@ -5,6 +5,7 @@ from tools.init_data_db import T_1_FIRST_NAME
 
 req_format = RequestFormat()
 
+
 @pytest.mark.parametrize(
     'url,status_code,text',
     [

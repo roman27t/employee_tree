@@ -6,17 +6,20 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy_utils import Ltree
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from consts.page_format import ContextFields
 from models import StaffModel, PositionModel
-from tools.front_side import front_staff_tree, front_staff_by_id
 from validations import GetValidate, PostValidate, PatchValidate
+from tools.front_side import front_staff_tree, front_staff_by_id
+from consts.page_format import ContextFields
 from tools.init_data_db import init_data
 from decorators.request_decorators import validation, response_formatter
 
 
 class StaffView(web.View, ahsa.SAMixin):
     @response_formatter(
-        template='staff_tree.html', template_id='staff.html',handler=front_staff_tree, handler_id=front_staff_by_id,
+        template='staff_tree.html',
+        template_id='staff.html',
+        handler=front_staff_tree,
+        handler_id=front_staff_by_id,
     )
     @validation(class_validate=GetValidate)
     async def get(self, validator: GetValidate, db_session: AsyncSession) -> web.Response:

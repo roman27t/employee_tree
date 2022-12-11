@@ -1,5 +1,5 @@
-import datetime as dt
 import random
+import datetime as dt
 
 import sqlalchemy as sa
 from sqlalchemy import ForeignKey, UniqueConstraint, orm

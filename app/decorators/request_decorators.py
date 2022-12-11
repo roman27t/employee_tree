@@ -3,11 +3,10 @@ import functools
 from typing import Callable
 
 import aiohttp_jinja2
-
 from aiohttp import web
 
-from consts.page_format import RequestFormat, ContextFields
 from validations import ValidateAbstract
+from consts.page_format import ContextFields, RequestFormat
 
 
 def validation(class_validate):

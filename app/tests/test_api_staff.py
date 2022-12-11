@@ -36,7 +36,7 @@ async def test_get_staff(create_test_client, event_loop, url: str, status_code: 
 
 
 def __create_data_person(
-        last_name: str = 'ivanov', exclude_fields: Optional[tuple[str]] = None, rate: float = 99777.01,
+    last_name: str = 'ivanov', exclude_fields: Optional[tuple[str]] = None, rate: float = 99777.01
 ) -> dict:
     birthdate = dt.datetime.strptime('21.11.1940', '%d.%m.%Y').date() + dt.timedelta(days=random.randint(1, 21900))
     person = {

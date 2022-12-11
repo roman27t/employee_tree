@@ -35,9 +35,9 @@ async def create_test_client(aiohttp_client):
     if i_config.DB_URL.split('/')[-1] != 'postgres_test':
         raise Exception('need DB - postgres_test')
     async with engine.begin() as conn:
-            await conn.execute(text('CREATE EXTENSION IF NOT EXISTS ltree;'))
-            await conn.run_sync(Base.metadata.drop_all)
-            await conn.run_sync(Base.metadata.create_all)
+        await conn.execute(text('CREATE EXTENSION IF NOT EXISTS ltree;'))
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
     async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
     await init_data(sa_session=async_session())
     return await aiohttp_client(await app_factory())
