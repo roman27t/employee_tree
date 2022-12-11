@@ -16,4 +16,13 @@
         {% endfor %}
         <br>
   {% endfor %}
+
+{% if _levels %}
+<br>
+<div class="container-fluid fw-lighter" style="font-size: small;">
+    Разным цветом показаны связи.
+    Цвет фамилии текущего сотрудника совпадает с цветом долджности сотрудника,
+    который находится ниже (подчинённый).
+</div>
+{% endif %}
 {% endblock %}}
