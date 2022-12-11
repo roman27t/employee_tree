@@ -16,10 +16,11 @@
             {% if status %}
                 {% block content %}{% endblock %}
             {% else %}
-                <div class="alert alert-danger" role="alert">
-                    Error: {{code}} - {{message}}
-                </div>
+                {% include 'error.html' %}
             {% endif %}
+        {% if not index %}
+            {% include 'staff_operation.html' %}
+        {% endif %}
         </div>
     </body>
 </html>
