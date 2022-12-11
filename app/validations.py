@@ -75,11 +75,11 @@ class GetValidate(ValidateAbstract):
 
 class PostValidate(ValidateAbstract):
     def init(self):
-        self.__parent_obj: Optional[StaffModel] = None
+        self.__obj: Optional[StaffModel] = None
 
     @property
-    def parent_obj(self) -> StaffModel:
-        return self.__parent_obj
+    def obj_model(self) -> StaffModel:
+        return self.__obj
 
     @property
     def input_schema(self) -> PostSchema:
@@ -89,11 +89,11 @@ class PostValidate(ValidateAbstract):
         return (self.__set_input_data,)
 
     def _async_validations(self) -> tuple:
-        return (self.__validate_parent_obj,)
+        return (self.__validate_obj,)
 
-    async def __validate_parent_obj(self):
+    async def __validate_obj(self):
         _id = self.__input_schema.parent_id
-        self.__parent_obj = await self._get_db_obj(class_model=StaffModel, pk=_id, code='bad_parent')
+        self.__obj = await self._get_db_obj(class_model=StaffModel, pk=_id, code='bad_parent')
 
     def __set_input_data(self):
         self.__input_schema = PostSchema.parse_custom(data=self.body, code='bad_schema')
@@ -101,21 +101,21 @@ class PostValidate(ValidateAbstract):
 
 class PatchValidate(ValidateAbstract):
     def init(self):
-        self.__person: Optional[StaffModel] = None
+        self.__obj: Optional[StaffModel] = None
 
     @property
     def input_schema(self) -> PatchSchema:
         return self.__input_schema
 
     @property
-    def person(self) -> StaffModel:
-        return self.__person
+    def obj_model(self) -> StaffModel:
+        return self.__obj
 
     def _sync_validations(self) -> tuple:
         return (self.__set_input_data,)
 
     def _async_validations(self) -> tuple:
-        return self.__validate_position, self.__get_person
+        return self.__validate_position, self.__validate_obj
 
     def __set_input_data(self):
         self.__input_schema: PatchSchema = PatchSchema.parse_custom(data=self.body, code='bad_schema')
@@ -127,5 +127,5 @@ class PatchValidate(ValidateAbstract):
             return
         await self._get_db_obj(class_model=PositionModel, pk=self.__input_schema.position_id, code='bad_position')
 
-    async def __get_person(self):
-        self.__person = await self._get_db_obj(class_model=StaffModel, pk=self.id_schema.id, code='bad_person')
+    async def __validate_obj(self):
+        self.__obj = await self._get_db_obj(class_model=StaffModel, pk=self.id_schema.id, code='bad_person')

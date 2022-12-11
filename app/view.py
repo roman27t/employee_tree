@@ -73,7 +73,7 @@ class StaffView(web.View, ahsa.SAMixin):
             "400":  Validation error
             "403":  Duplicate Error
         """
-        new_person = StaffModel(path=validator.parent_obj.path, **validator.input_schema.dict_by_db())
+        new_person = StaffModel(path=validator.obj_model.path, **validator.input_schema.dict_by_db())
         db_session.add(new_person)
         try:
             await db_session.flush()
@@ -108,10 +108,10 @@ class StaffView(web.View, ahsa.SAMixin):
             "400":  error
         """
         for key, value in validator.input_schema.dict().items():
-            setattr(validator.person, key, value) if value is not None else None
-        db_session.add(validator.person)
+            setattr(validator.obj_model, key, value) if value is not None else None
+        db_session.add(validator.obj_model)
         await db_session.commit()
-        return web.json_response(validator.person.serialized)
+        return web.json_response(validator.obj_model.serialized)
 
 
 class PositionView(web.View, ahsa.SAMixin):
