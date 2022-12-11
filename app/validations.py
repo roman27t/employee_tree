@@ -5,7 +5,7 @@ from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import StaffModel, PositionModel
-from schemas.staff_shemas import PostSchema, PatchSchema
+from schemas.staff_shemas import PostStaffSchema, PatchStaffSchema
 from schemas.base_schemas import PydBaseModel, IdSchema
 from tools.exceptions import InValidException
 
@@ -83,7 +83,7 @@ class PostValidate(ValidateAbstract):
         return self.__obj
 
     @property
-    def input_schema(self) -> PostSchema:
+    def input_schema(self) -> PostStaffSchema:
         return self.__input_schema
 
     def _sync_validations(self) -> tuple:
@@ -97,7 +97,7 @@ class PostValidate(ValidateAbstract):
         self.__obj = await self._get_db_obj(class_model=StaffModel, pk=_id, code='bad_parent')
 
     def __set_input_data(self):
-        self.__input_schema = PostSchema.parse_custom(data=self.body, code='bad_schema')
+        self.__input_schema = PostStaffSchema.parse_custom(data=self.body, code='bad_schema')
 
 
 class PatchValidate(ValidateAbstract):
@@ -105,7 +105,7 @@ class PatchValidate(ValidateAbstract):
         self.__obj: Optional[StaffModel] = None
 
     @property
-    def input_schema(self) -> PatchSchema:
+    def input_schema(self) -> PatchStaffSchema:
         return self.__input_schema
 
     @property
@@ -119,7 +119,7 @@ class PatchValidate(ValidateAbstract):
         return self.__validate_position, self.__validate_obj
 
     def __set_input_data(self):
-        self.__input_schema: PatchSchema = PatchSchema.parse_custom(data=self.body, code='bad_schema')
+        self.__input_schema: PatchStaffSchema = PatchStaffSchema.parse_custom(data=self.body, code='bad_schema')
         if not self.__input_schema.has_values():
             raise InValidException(status_code=400, code='nothing_update')
 

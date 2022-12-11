@@ -143,6 +143,18 @@ class PositionView(web.View, ahsa.SAMixin):
             return web.json_response({'code': 'not_exist', 'message': 'not exist'}, status=400)
         return web.json_response(data)
 
+    # @validation(class_validate=PostValidate)
+    # async def post(self, validator: PostValidate, db_session: AsyncSession):
+    #     new_person = StaffModel(path=validator.obj_model.path, **validator.input_schema.dict_by_db())
+    #     db_session.add(new_person)
+    #     try:
+    #         await db_session.flush()
+    #         new_person.path += Ltree(str(new_person.pk))
+    #         await db_session.commit()
+    #     except IntegrityError:
+    #         return web.json_response({'message': 'Duplicate Error'}, status=403)
+    #     return web.json_response(new_person.serialized)
+
 
 async def init_data_view(request):
     """

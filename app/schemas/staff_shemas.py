@@ -25,7 +25,7 @@ class _FioSchema(PydBaseModel):
         return v.capitalize()
 
 
-class PostSchema(_FioSchema):
+class PostStaffSchema(_FioSchema):
     parent_id: PositiveInt
     position_id: PositiveInt
     birthdate: dt.date
@@ -39,7 +39,7 @@ class PostSchema(_FioSchema):
         return data
 
 
-class PatchSchema(_FioSchema):
+class PatchStaffSchema(_FioSchema):
     position_id: Optional[PositiveInt]
     last_name: Optional[constr(max_length=50)]
     first_name: Optional[constr(max_length=50)]
