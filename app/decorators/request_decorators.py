@@ -40,6 +40,7 @@ def response_formatter(template: str, template_id: str = '', handler: Callable =
             current_template = template_id if pk else template
             if current_template and _self.request.query.get('html') == '1':
                 data = json.loads(response.text)
+                data['status'] = response.status == 200
                 current_handler = handler_id if pk else handler
                 context = current_handler(data) if current_handler else data
                 return await aiohttp_jinja2.render_template_async(current_template, _self.request, context)

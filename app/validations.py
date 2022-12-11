@@ -30,7 +30,7 @@ class ValidateAbstract(ABC):
 
     @property
     def output_data(self) -> dict:
-        return {'code': self.code, 'message': self.message, 'status_code': self.status_code}
+        return {'code': self.code, 'message': self.message}
 
     def _set_error(self, status_code: int, code: str, message: str = ''):
         self.status_code = status_code

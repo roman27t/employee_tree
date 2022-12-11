@@ -13,7 +13,13 @@
         {% endif %}
     </div>
         <div class="container-md mt-5">
-            {% block content %}{% endblock %}
+            {% if status %}
+                {% block content %}{% endblock %}
+            {% else %}
+                <div class="alert alert-danger" role="alert">
+                    Error: {{code}} - {{message}}
+                </div>
+            {% endif %}
         </div>
     </body>
 </html>

@@ -44,6 +44,8 @@ class StaffView(web.View, ahsa.SAMixin):
         for i in result:
             data['staff'][i.pk] = i.serialized
             data['position'][i.position.pk] = i.position.serialized
+        if not data['staff']:
+            return web.json_response({'code': 'not_exist', 'message': 'not_exist'}, status=400)
         return web.json_response(data)
 
     @validation(class_validate=PostValidate)
@@ -123,4 +125,5 @@ async def init_data_view(request):
 
 class StaffTemplateView(web.View, ahsa.SAMixin):
     async def get(self):
-        return await aiohttp_jinja2.render_template_async('index.html', self.request, {'index': True})
+        context = {'index': True, 'status': True}
+        return await aiohttp_jinja2.render_template_async('index.html', self.request, context)

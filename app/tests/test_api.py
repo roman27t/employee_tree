@@ -18,7 +18,7 @@ async def test_gen_position(create_test_client, event_loop):
     [
         ('/staff/', 200, True),
         ('/staff/1/', 200, True),
-        ('/staff/999999999/', 200, False),
+        ('/staff/999999999/', 400, False),
         ('/staff/aaaaa/', 400, False),
     ],
 )
