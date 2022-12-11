@@ -5,8 +5,8 @@ from typing import Callable
 import aiohttp_jinja2
 from aiohttp import web
 
-from validations.abstract_validations import ValidateAbstract
 from consts.page_format import ContextFields, RequestFormat
+from validations.abstract_validations import ValidateAbstract
 
 
 def validation(class_validate):

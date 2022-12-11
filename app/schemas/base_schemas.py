@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ValidationError, PositiveInt
+from pydantic import BaseModel, PositiveInt, ValidationError
 
 from tools.exceptions import InValidException
 

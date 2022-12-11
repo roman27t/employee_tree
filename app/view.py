@@ -8,13 +8,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import StaffModel, PositionModel
 from tools.db_helper import update_db_object
-from validations.position_validations import PostPositionValidate, PatchPositionValidate
-from validations.staff_validations import PostStaffValidate, PatchStaffValidate
-from validations.base_validations import GetValidate
 from tools.front_side import front_staff_tree, front_staff_by_id
 from consts.page_format import ContextFields
 from tools.init_data_db import init_data
+from validations.base_validations import GetValidate
 from decorators.request_decorators import validation, response_formatter
+from validations.staff_validations import PostStaffValidate, PatchStaffValidate
+from validations.position_validations import (
+    PostPositionValidate,
+    PatchPositionValidate,
+)
 
 
 class StaffView(web.View, ahsa.SAMixin):

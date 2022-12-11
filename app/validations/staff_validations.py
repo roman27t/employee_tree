@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 from models import StaffModel, PositionModel
-from schemas.staff_shemas import PostStaffSchema, PatchStaffSchema
 from tools.exceptions import InValidException
+from schemas.staff_shemas import PostStaffSchema, PatchStaffSchema
 from validations.abstract_validations import ValidateAbstract
 
 

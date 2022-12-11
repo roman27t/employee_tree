@@ -4,8 +4,8 @@ from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from schemas.base_schemas import IdSchema, PydBaseModel
 from tools.exceptions import InValidException
+from schemas.base_schemas import IdSchema, PydBaseModel
 
 
 class ValidateAbstract(ABC):

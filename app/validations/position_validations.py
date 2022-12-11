@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 from models import PositionModel
-from schemas.position_shemas import PostPositionSchema, PatchPositionSchema
 from tools.exceptions import InValidException
+from schemas.position_shemas import PostPositionSchema, PatchPositionSchema
 from validations.abstract_validations import ValidateAbstract
 
 
@@ -22,7 +22,7 @@ class _PositionBaseValidate(ValidateAbstract, ABC):
     def _sync_validations(self) -> tuple:
         return (self._set_input_data,)
 
-    
+
 class PostPositionValidate(_PositionBaseValidate):
     @property
     def input_schema(self) -> PostPositionSchema:
@@ -38,7 +38,7 @@ class PatchPositionValidate(_PositionBaseValidate):
         return self.__input_schema
 
     def _async_validations(self) -> tuple:
-        return self.__validate_obj,
+        return (self.__validate_obj,)
 
     def _set_input_data(self):
         self.__input_schema: PatchPositionSchema = PatchPositionSchema.parse_custom(data=self.body, code='bad_schema')
