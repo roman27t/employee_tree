@@ -1,3 +1,8 @@
 <div class="alert alert-danger" role="alert">
     Error: {{code}} - {{message}}
 </div>
+{% if code == 'not_exist' %}
+    <br>
+    <a class="btn btn-primary" href="{{ url('init_db') }}" role="button" target="_blank">Fill DB</a>
+    <br>
+{% endif %}
