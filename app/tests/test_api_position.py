@@ -1,3 +1,4 @@
+import json
 import pytest
 
 
@@ -18,3 +19,22 @@ async def test_get_position(create_test_client, event_loop, url: str, status_cod
     data = await response.json()
     if status_code == 200:
         assert data['7']['name'] == 'security_guard'
+
+
+@pytest.mark.parametrize(
+    'input_data,status_code,',
+    [
+        ({'name': 'Lawyer', 'detail': 'detail of admin'}, 200),
+        ({'name': 'economist'}, 200),
+        ({'name': 'r'}, 400),
+        ({'name': 'admin'}, 403),
+    ],
+)
+@pytest.mark.asyncio
+async def test_post_position(create_test_client, event_loop, input_data: dict, status_code: int):
+    client = await create_test_client
+    response = await client.post('/position/', data=json.dumps(input_data))
+    assert response.status == status_code
+    data = await response.json()
+    if status_code == 200:
+        assert data['name'] == input_data['name'].lower()

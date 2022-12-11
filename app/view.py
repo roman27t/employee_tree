@@ -7,6 +7,7 @@ from sqlalchemy_utils import Ltree
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import StaffModel, PositionModel
+from validations.position_validations import PostPositionValidate
 from validations.staff_validations import PostStaffValidate, PatchStaffValidate
 from validations.base_validations import GetValidate
 from tools.front_side import front_staff_tree, front_staff_by_id
@@ -144,17 +145,15 @@ class PositionView(web.View, ahsa.SAMixin):
             return web.json_response({'code': 'not_exist', 'message': 'not exist'}, status=400)
         return web.json_response(data)
 
-    # @validation(class_validate=PostStaffValidate)
-    # async def post(self, validator: PostStaffValidate, db_session: AsyncSession):
-    #     new_person = StaffModel(path=validator.obj_model.path, **validator.input_schema.dict_by_db())
-    #     db_session.add(new_person)
-    #     try:
-    #         await db_session.flush()
-    #         new_person.path += Ltree(str(new_person.pk))
-    #         await db_session.commit()
-    #     except IntegrityError:
-    #         return web.json_response({'message': 'Duplicate Error'}, status=403)
-    #     return web.json_response(new_person.serialized)
+    @validation(class_validate=PostPositionValidate)
+    async def post(self, validator: PostPositionValidate, db_session: AsyncSession):
+        new_position = PositionModel(**validator.input_schema.dict())
+        db_session.add(new_position)
+        try:
+            await db_session.commit()
+        except IntegrityError:
+            return web.json_response({'message': 'Duplicate Error'}, status=403)
+        return web.json_response(new_position.serialized)
 
 
 async def init_data_view(request):

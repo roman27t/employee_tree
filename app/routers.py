@@ -12,6 +12,7 @@ def get_routes() -> list:
         web.patch('/staff/{id}/', StaffView, name='staff_patch'),
         web.get('/position/', PositionView, name='positions'),
         web.get('/position/{id}/', PositionView, name='position'),
+        web.post('/position/', PositionView, name='position_post'),
         # service urls
         web.get('/system/init_data/', init_data_view, name='init_db'),
     ]
