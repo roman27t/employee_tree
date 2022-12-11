@@ -66,7 +66,7 @@ class StaffView(web.View, ahsa.SAMixin):
         parameters:
         - in: body
           name: body
-          description: Created user object
+          description: Created employee object
           required: false
           schema:
               $ref: '#/definitions/StaffPost'
@@ -101,7 +101,7 @@ class StaffView(web.View, ahsa.SAMixin):
           type: integer
         - in: body
           name: body
-          description: Created user object
+          description: Updated employee object
           required: false
           schema:
               $ref: '#/definitions/StaffPatch'
@@ -147,6 +147,24 @@ class PositionView(web.View, ahsa.SAMixin):
 
     @validation(class_validate=PostPositionValidate)
     async def post(self, validator: PostPositionValidate, db_session: AsyncSession):
+        """
+        ---
+        description: create one position.
+        tags:
+        - PositionView
+        produces:
+        - application/json
+        parameters:
+        - in: body
+          name: body
+          required: false
+          schema:
+              $ref: '#/definitions/PositionPost'
+        responses:
+            "200":  success
+            "400":  Validation error
+            "403":  Duplicate Error
+        """
         new_position = PositionModel(**validator.input_schema.dict())
         db_session.add(new_position)
         try:
@@ -157,6 +175,27 @@ class PositionView(web.View, ahsa.SAMixin):
 
     @validation(class_validate=PatchPositionValidate)
     async def patch(self, validator: PatchPositionValidate, db_session: AsyncSession):
+        """
+        ---
+        description: update one employee.
+        tags:
+        - PositionView
+        produces:
+        - application/json
+        parameters:
+        - in: path
+          name: id
+          required: true
+          type: integer
+        - in: body
+          name: body
+          required: false
+          schema:
+              $ref: '#/definitions/PositionPost'
+        responses:
+            "200":  success
+            "400":  error
+        """
         for key, value in validator.input_schema.dict().items():
             setattr(validator.obj_model, key, value) if value is not None else None
         db_session.add(validator.obj_model)

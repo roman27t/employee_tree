@@ -13,4 +13,11 @@ DATA_SWAGGER = {
             "birthdate": {"type": "date", "default": "2000-12-22"},
         },
     },
+    "PositionPost": {
+        "type": "object",
+        "properties": {
+            "name": {"type": "string", "default": "economist"},
+            "detail": {"type": "string", "default": "detail of economist"},
+        },
+    },
 }
