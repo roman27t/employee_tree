@@ -3,17 +3,18 @@
 {% block content %}
   {% for level in _levels %}
         {% for i in _levels[level] %}
+            {% set position_id = _staff_path[i].position_id | string %}
             <span style="color:{{_staff_path[_staff_path[i]._parent_path]._color}}">
                 <a style="color:{{_staff_path[_staff_path[i]._parent_path]._color}}"
                    href="{{ url('staff', id=_staff_path[i].pk) }}?html=1">
-                    |{{i}}
+                    |{{i}} {{position[position_id].name}}
                 </a>
             </span>
             <span style="color:{{_staff_path[i]._color}}">
-                {{position[_staff_path[i].position_id].name}} {{_staff_path[i].last_name}}
-                {{_staff_path[i].first_name}} |
+                {{_staff_path[i].last_name}} {{_staff_path[i].first_name}} |
             </span>
         {% endfor %}
         <br>
   {% endfor %}
+
 {% endblock %}}

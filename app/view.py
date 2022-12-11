@@ -18,7 +18,7 @@ class StaffView(web.View, ahsa.SAMixin):
         template='staff_tree.html', template_id='staff.html',handler=front_staff_tree, handler_id=front_staff_by_id,
     )
     @validation(class_validate=GetValidate)
-    async def get(self, validator: GetValidate, db_session: AsyncSession) -> dict:
+    async def get(self, validator: GetValidate, db_session: AsyncSession) -> web.Response:
         """
         ---
         description: return all employees or one employee.
@@ -44,7 +44,7 @@ class StaffView(web.View, ahsa.SAMixin):
         for i in result:
             data['staff'][i.pk] = i.serialized
             data['position'][i.position.pk] = i.position.serialized
-        return data
+        return web.json_response(data)
 
     @validation(class_validate=PostValidate)
     async def post(self, validator: PostValidate, db_session: AsyncSession):

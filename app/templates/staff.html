@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+{% set position_id = _staff.position_id | string %}
 <table class="table">
     <thead>
     <tr>
@@ -20,7 +20,7 @@
         <td>{{ _staff.last_name }}</td>
         <td>{{ _staff.first_name }}</td>
         <td>{{ _staff.middle_name }}</td>
-        <td>{{ position[_staff.position_id].name }}</td>
+        <td>{{ position[position_id].name }}</td>
         <td>{{ _staff.hiring_date }}</td>
         <td>{{ _staff.wage_rate }}</td>
     </tr>
