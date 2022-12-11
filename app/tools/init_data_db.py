@@ -17,6 +17,7 @@ __NAMES = (
     'cleaner',
     'receptionist',
 )
+T_1_FIRST_NAME = 'First'
 
 
 async def init_data(sa_session):
@@ -35,7 +36,7 @@ async def init_data(sa_session):
         staff = result.scalars().first()
         if staff is None:
             person_1 = StaffModel(
-                last_name='First',
+                last_name=T_1_FIRST_NAME,
                 first_name='Ivan',
                 wage_rate=Decimal(200000),
                 path=Ltree('1'),
