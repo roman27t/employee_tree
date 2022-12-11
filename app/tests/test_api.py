@@ -5,6 +5,8 @@ from typing import Optional
 
 import pytest
 
+from schemas import MIN_RATE
+
 
 @pytest.mark.asyncio
 async def test_gen_position(create_test_client, event_loop):
@@ -55,7 +57,7 @@ def __create_data_person(
     [
         (__create_data_person(), 200),
         (__create_data_person(last_name='has_digit_1'), 400),
-        (__create_data_person(rate=1), 400),
+        (__create_data_person(rate=MIN_RATE - 1), 400),
         (__create_data_person(exclude_fields=('birthdate',)), 400),
     ],
 )
