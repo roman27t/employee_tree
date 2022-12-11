@@ -6,6 +6,7 @@ import aiohttp_jinja2
 
 from aiohttp import web
 
+from consts.page_format import RequestFormat
 from validations import ValidateAbstract
 
 
@@ -38,7 +39,7 @@ def response_formatter(template: str, template_id: str = '', handler: Callable =
             response: web.Response = await func(*args, **kwargs)
             pk = _self.request.match_info.get('id')
             current_template = template_id if pk else template
-            if current_template and _self.request.query.get('html') == '1':
+            if current_template and _self.request.query.get(RequestFormat.html) == RequestFormat.value:
                 data = json.loads(response.text)
                 data['status'] = response.status == 200
                 current_handler = handler_id if pk else handler

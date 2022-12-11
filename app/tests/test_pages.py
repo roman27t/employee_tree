@@ -1,15 +1,17 @@
 import pytest
 
+from consts.page_format import RequestFormat
 from tools.init_data_db import T_1_FIRST_NAME
 
+req_format = RequestFormat()
 
 @pytest.mark.parametrize(
     'url,status_code,text',
     [
         ('/', 200, 'tree'),
-        ('/staff/?html=1', 200, T_1_FIRST_NAME),
-        ('/staff/1/?html=1', 200, T_1_FIRST_NAME),
-        ('/staff/bad_id/?html=1', 200, 'Error'),
+        (f'/staff/?{req_format.param_encode}', 200, T_1_FIRST_NAME),
+        (f'/staff/1/?{req_format.param_encode}', 200, T_1_FIRST_NAME),
+        (f'/staff/bad_id/?{req_format.param_encode}', 200, 'Error'),
     ],
 )
 @pytest.mark.asyncio
