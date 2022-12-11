@@ -5,7 +5,7 @@ from typing import Callable
 import aiohttp_jinja2
 from aiohttp import web
 
-from validations.staff_validations import ValidateAbstract
+from validations.abstract_validations import ValidateAbstract
 from consts.page_format import ContextFields, RequestFormat
 
 

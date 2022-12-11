@@ -7,7 +7,8 @@ from sqlalchemy_utils import Ltree
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import StaffModel, PositionModel
-from validations.staff_validations import GetValidate, PostValidate, PatchValidate
+from validations.staff_validations import PostValidate, PatchValidate
+from validations.base_validations import GetValidate
 from tools.front_side import front_staff_tree, front_staff_by_id
 from consts.page_format import ContextFields
 from tools.init_data_db import init_data
