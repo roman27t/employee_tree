@@ -1,4 +1,6 @@
+import re
 import datetime as dt
+from decimal import Decimal
 from typing import Optional
 
 from pydantic import (
@@ -7,6 +9,7 @@ from pydantic import (
     ValidationError,
     constr,
     condecimal,
+    validator,
 )
 
 from tools.exceptions import InValidException
@@ -39,7 +42,7 @@ class PostSchema(PydBaseModel):
     last_name: constr(max_length=50)
     first_name: constr(max_length=50)
     middle_name: constr(max_length=50) = ''
-    wage_rate: condecimal(max_digits=10, decimal_places=2)
+    wage_rate: condecimal(max_digits=10, decimal_places=2, ge=Decimal(1000))
     birthdate: dt.date
 
     def dict_by_db(self) -> dict:
@@ -48,6 +51,12 @@ class PostSchema(PydBaseModel):
         for i in exclude_keys:
             del data[i]
         return data
+
+    @validator('last_name', 'first_name', 'middle_name')
+    def upgrade_fio(cls, v: str) -> str:
+        if bool(re.search(r'\d', v)):
+            raise ValidationError('digits are deny')
+        return v.capitalize()
 
 
 class PatchSchema(PydBaseModel):

@@ -33,13 +33,15 @@ async def test_get_staff(create_test_client, event_loop, url: str, status_code: 
         assert bool(data['position']) is has_data
 
 
-def __create_data_person(exclude_fields: Optional[tuple[str]] = None) -> dict:
+def __create_data_person(
+        last_name: str = 'ivanov', exclude_fields: Optional[tuple[str]] = None, rate: float = 99777.01,
+) -> dict:
     birthdate = dt.datetime.strptime('21.11.1940', '%d.%m.%Y').date() + dt.timedelta(days=random.randint(1, 21900))
     person = {
-        'last_name': 'Ivanov',
-        'first_name': 'Roman',
+        'last_name': last_name,
+        'first_name': 'roman',
         'parent_id': random.randint(2, 3),
-        'wage_rate': 99777.01,
+        'wage_rate': rate,
         'position_id': random.randint(1, 7),
         'birthdate': birthdate.isoformat(),
     }
@@ -52,6 +54,8 @@ def __create_data_person(exclude_fields: Optional[tuple[str]] = None) -> dict:
     'person,status_code,',
     [
         (__create_data_person(), 200),
+        (__create_data_person(last_name='has_digit_1'), 400),
+        (__create_data_person(rate=1), 400),
         (__create_data_person(exclude_fields=('birthdate',)), 400),
     ],
 )
@@ -62,7 +66,7 @@ async def test_post_staff(create_test_client, event_loop, person: dict, status_c
     assert response.status == status_code
     data = await response.json()
     if status_code == 200:
-        assert data['last_name'] == person['last_name']
+        assert data['last_name'] == person['last_name'].capitalize()
 
 
 @pytest.mark.asyncio

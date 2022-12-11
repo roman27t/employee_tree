@@ -38,7 +38,7 @@ async def init_data(sa_session):
             person_1 = StaffModel(
                 last_name=T_1_FIRST_NAME,
                 first_name='Ivan',
-                wage_rate=Decimal(200000),
+                wage_rate=Decimal(200_000),
                 path=Ltree('1'),
                 position_id=position.pk,
                 birthdate=dt.datetime.strptime('21.11.2000', '%d.%m.%Y').date(),
