@@ -1,6 +1,6 @@
 aiohttp==3.8.3
 asyncpg==0.27.0
-SQLAlchemy==1.4.44
+SQLAlchemy==1.4.45
 SQLAlchemy-Utils==0.38.3
 aiohttp-sqlalchemy==0.34.0
 alembic==1.8.1
@@ -19,5 +19,5 @@ pytest-async-sqlalchemy==0.2.0
 ipython==8.7.0
 
 isort==5.10.1
-black==22.10.0
+black==22.12.0
 mypy==0.991
