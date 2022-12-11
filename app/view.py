@@ -111,6 +111,36 @@ class StaffView(web.View, ahsa.SAMixin):
         return web.json_response(validator.person.serialized)
 
 
+class PositionView(web.View, ahsa.SAMixin):
+    @validation(class_validate=GetValidate)
+    async def get(self, validator: GetValidate, db_session: AsyncSession) -> web.Response:
+        """
+        ---
+        description: return all positions.
+        tags:
+        - PositionView
+        produces:
+        - application/json
+        parameters:
+        - in: path
+          name: id
+          required: false
+          type: integer
+        responses:
+            "200":  success
+            "400":  error
+        """
+        _id = validator.input_schema.id if validator.input_schema else None
+        query = sa.select(PositionModel)
+        query = query.where(PositionModel.pk == _id).limit(1) if _id else query
+        result = await db_session.execute(query)
+        result = result.scalars()
+        data = {i.pk: i.serialized for i in result}
+        if not data:
+            return web.json_response({'code': 'not_exist', 'message': 'not exist'}, status=400)
+        return web.json_response(data)
+
+
 async def init_data_view(request):
     """
     ---
