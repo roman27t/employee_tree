@@ -7,7 +7,7 @@ from tools.exceptions import InValidException
 from validations.abstract_validations import ValidateAbstract
 
 
-class _PostPositionBaseValidate(ValidateAbstract, ABC):
+class _PositionBaseValidate(ValidateAbstract, ABC):
     def init(self):
         self._obj: Optional[PositionModel] = None
 
@@ -23,19 +23,16 @@ class _PostPositionBaseValidate(ValidateAbstract, ABC):
         return (self._set_input_data,)
 
     
-class PostPositionValidate(_PostPositionBaseValidate):
+class PostPositionValidate(_PositionBaseValidate):
     @property
     def input_schema(self) -> PostPositionSchema:
         return self.__input_schema
-
-    def _sync_validations(self) -> tuple:
-        return (self._set_input_data,)
 
     def _set_input_data(self):
         self.__input_schema = PostPositionSchema.parse_custom(data=self.body, code='bad_schema')
 
 
-class PatchPositionValidate(_PostPositionBaseValidate):
+class PatchPositionValidate(_PositionBaseValidate):
     @property
     def input_schema(self) -> PatchPositionSchema:
         return self.__input_schema
